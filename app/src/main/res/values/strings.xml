@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">MyApp</string>
+
+    <!-- Strings login -->
+    <string name="loginEmail">Email</string>
+    <string name="loginPassword">Password</string>
+    <string name="loginLogIn">Log In</string>
+    <string name="loginCreatenewAccount">Create a new Account!</string>
+    <string name="loginResetPassword">Forgot password?</string>
+    <string name="loginChangeLanguage">Change language</string>
+
+    <!-- Strings register -->
+    <string name="registerAcount">Create a New Account</string>
+    <string name="registerFirstName">First Name</string>
+    <string name="registerLastName">Last Name</string>
+    <string name="registerEmail">Email</string>
+    <string name="registerPassword">Password</string>
+    <string name="registerSignUp">Sign Up</string>
+    <string name="registerHaveAccountLogin">Have Account? Login</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <!-- Strings Top scores -->
+    <string name="topScore">Top scores</string>
+
+    <!-- Strings challenges -->
+    <string name="addChallenge">Add Challenge</string>
+    <string name="title_activity_maps2">MapsActivity2</string>
+    <string name="login_welcome">Login</string>
+    <string name="login_register">Register</string>
+    <string name="main_welcome">Welcome</string>
+    <string name="main_map">Map</string>
+    <string name="main_log_out">Log out</string>
+    <string name="main_page">main page</string>
+
+
+</resources>
