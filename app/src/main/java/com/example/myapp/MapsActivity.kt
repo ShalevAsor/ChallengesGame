@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapp.MathChallenge
 import com.example.myapp.databinding.ActivityMapsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -202,6 +203,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         }
         btnStartChallenge.setOnClickListener{
             //add code to start game here
+            val intent = Intent(this, ButtonChallenge::class.java)
+            startActivity(intent)
         }
         markerPopUp.show()
         return true
