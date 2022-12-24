@@ -20,18 +20,18 @@ class RegisterActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         //allows to go to login page
-        binding.loginPage.setOnClickListener{
+        binding.registerLoginPage.setOnClickListener{
             val intent = Intent(this,LoginActivity::class.java)
             startActivity(intent)
         }
 
 
-        // set user information
+        // set user information  - not loading to db yet
         binding.btnSigUp.setOnClickListener{
-            val email = binding.editEmail.text.toString()
-            val fName = binding.editFName.text.toString()
-            val lName = binding.editLName.text.toString()
-            val pass = binding.editPass.text.toString()
+            val email = binding.registerEmail.text.toString()
+            val fName = binding.registerFName.text.toString()
+            val lName = binding.registerLName.text.toString()
+            val pass = binding.registerPass.text.toString()
 
             if(email.isNotEmpty() && fName.isNotEmpty() && lName.isNotEmpty() && pass.isNotEmpty()){
                 //create user and go to login screen

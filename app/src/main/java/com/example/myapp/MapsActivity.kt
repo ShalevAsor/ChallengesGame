@@ -1,49 +1,70 @@
 package com.example.myapp
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-
+import androidx.core.content.ContextCompat
+import com.example.myapp.databinding.ActivityMapsBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.myapp.databinding.ActivityMapsBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private lateinit var currentLocation:Location
+    private lateinit var currentLocation :Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val permissionCode = 101
+    private lateinit var marker: Marker
+    private lateinit var markerPopUp: Dialog
+    private val radius = 500.0
+    private val defaultZoom = 12f
     // for map custom design
 
     lateinit var menu_bar: LinearLayout
     lateinit var addChallenge: TextView
     // indicator - allows only one click on the map when adding marker
     private var clicked = false
+    private var locationPermissionGranted = false
+
+    private val KEY_CAMERA_POSITION = "camera_position"
+    private val KEY_LOCATION = "location"
+
+    //
+    private lateinit var cameraPosition: CameraPosition
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        /* set layer  */
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
         menu_bar = findViewById(R.id.map_bar)
-        addChallenge = findViewById(R.id.add_challenge)
+        addChallenge = findViewById(R.id.mapAddChallenge)
 
         //save device last location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -55,22 +76,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         getUserCurrentLocation()
+        /* manage view */
+        // go to main page
+        binding.mapMainBtn.setOnClickListener {
+            val intent = Intent(this,MainActivity::class.java)
+            startActivity(intent)
+        }
+        //load marker popup
+        markerPopUp = Dialog(this)
+        markerPopUp.setCancelable(false)
+        markerPopUp.setContentView(R.layout.marker_popup)
+
+
     }
     //if there is no location permission then ask from the user permission and get current location
     private fun getUserCurrentLocation(){
         if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
-        !=PackageManager.PERMISSION_GRANTED &&
+            !=PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)!=
-                PackageManager.PERMISSION_GRANTED){
+            PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),permissionCode)
             return
         }
+
         val getLocation = fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            location ->
+                location ->
             if(location != null){
-                currentLocation = location
-                Toast.makeText(this,currentLocation.latitude.toString() + " " +
-                    currentLocation.longitude.toString(), Toast.LENGTH_LONG).show()
+                currentLocation  = location
+                Toast.makeText(this,currentLocation .latitude.toString() + " " +
+                        currentLocation .longitude.toString(), Toast.LENGTH_LONG).show()
 
                 // Obtain the SupportMapFragment and get notified when the map is ready to be used.
                 val mapFragment = supportFragmentManager
@@ -79,7 +113,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
-    // when the user gave permission get the user location
+    /* when the user gave permission get the user location */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -97,20 +131,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
 
         mMap = googleMap
-        //current location
+        mMap.setOnMarkerClickListener(this)
+        // Get the current location of the device and set the position of the map.
         val latLng = LatLng(currentLocation.latitude,currentLocation.longitude)
         val markerOptions = MarkerOptions().position(latLng).title("My location!")
+
         //set map camera focus on the user location
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,7f))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.0f))
         mMap.addMarker(markerOptions)
         //get clicked location and add new marker
         addChallenge.setOnClickListener{
@@ -120,7 +152,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val location = LatLng(latlng.latitude, latlng.longitude)
                 if(!clicked) {// can add only one marker in each "addChallenge" text clicked
                     clicked = true
-                    mMap.addMarker(MarkerOptions().position(location))
+                     mMap.addMarker(MarkerOptions().position(location))!!
                     Toast.makeText(this, "success ", Toast.LENGTH_SHORT).show()
                 }
                 else{
@@ -130,6 +162,49 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
         }
+
+    }
+
+    /**
+     * This method allows to draw a circle where the center of the circle is Marker
+     * this circle represents the max radius that the payer can start a challenge
+     */
+    private fun drawCircle(location: LatLng) {
+        val circleOptions = CircleOptions()
+        //specify the center of the circle
+        circleOptions.center(location)
+        circleOptions.radius(radius)
+        // Border color of the circle
+        circleOptions.strokeColor(Color.BLACK);
+
+        // Fill color of the circle
+        circleOptions.fillColor(0x30ff0000);
+
+        // Border width of the circle
+        circleOptions.strokeWidth(2F);
+
+        mMap.addCircle(circleOptions)
+    }
+
+    /**
+     * When the marker has clicked open the popup dialog
+     * Need to load the popup dialog according to the challenge type
+     */
+    override fun onMarkerClick(p0: Marker): Boolean {
+        //load marker dialog
+        markerPopUp = Dialog(this)
+        markerPopUp.setCancelable(false)
+        markerPopUp.setContentView(R.layout.marker_popup)
+        val btnCloseDialog = markerPopUp.findViewById<TextView>(R.id.closePopup)
+        val btnStartChallenge = markerPopUp.findViewById<Button>(R.id.marker_start)
+        btnCloseDialog.setOnClickListener{
+            markerPopUp.dismiss()
+        }
+        btnStartChallenge.setOnClickListener{
+            //add code to start game here
+        }
+        markerPopUp.show()
+        return true
     }
 
 }

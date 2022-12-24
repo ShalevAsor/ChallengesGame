@@ -35,11 +35,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_challenge"
+            android:id="@+id/mapAddChallenge"
             android:paddingStart="15dp"
             android:layout_marginTop="4dp"
             android:textColor="@color/Black"
-            android:text="@string/addChallenge"
+            android:text="@string/map_add_challenge"
             android:textAlignment="center"
             tools:ignore="RtlSymmetry" />
         <Button
@@ -47,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_gravity="start"
-            android:text="@string/main_page"
-            android:id="@+id/map_main_btn"
+            android:text="@string/map_main_page"
+            android:id="@+id/mapMainBtn"
            />
 
             </LinearLayout>

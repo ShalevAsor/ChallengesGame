@@ -11,19 +11,27 @@
         android:background="#5D1171"
         android:gravity="center"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/login_welcome"
-            android:layout_width="218dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="40dp"
-            android:text="@string/login_welcome"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            tools:ignore="RtlHardcoded" />
+            android:orientation="vertical"
+            android:background="@drawable/ic_login_bk">
+            <TextView
+                android:id="@+id/loginTitle"
+                android:layout_width="218dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="40dp"
+                android:text="@string/login_title"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:ignore="RtlHardcoded" />
+
+        </LinearLayout>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,12 +41,12 @@
             android:textAlignment="textStart">
 
             <EditText
-                android:id="@+id/eEmail"
+                android:id="@+id/loginEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:ems="10"
-                android:hint="@string/loginEmail"
+                android:hint="@string/login_email"
                 android:textColorHint="@color/Gray"
                 android:textColor="@color/Black"
                 android:layout_gravity="end"
@@ -54,31 +62,31 @@
                 android:textColor="@color/Black"
                 android:ems="10"
                 android:layout_gravity="end"
-                android:hint="@string/loginPassword"
+                android:hint="@string/login_password"
                 android:textColorHint="@color/Gray"
                 android:inputType="textPassword"
                 android:textDirection="locale" />
 
             <TextView
-                android:id="@+id/resetpass"
+                android:id="@+id/forgotPass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
-                android:text="@string/loginResetPassword"
+                android:text="@string/login_forgot_pass"
                 android:textAlignment="center"
                 android:textColor="#36073E"
                 tools:ignore="RtlCompat,RtlHardcoded" />
 
             <Button
-                android:id="@+id/btnlogin"
+                android:id="@+id/btnLogin"
                 android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:background="#9C27B0"
-                android:text="@string/loginLogIn"
+                android:text="@string/login_btn"
                 android:textAllCaps="false" />
 
             <com.google.android.gms.common.SignInButton
@@ -99,7 +107,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/chonburi"
-            android:text="@string/loginCreatenewAccount"
+            android:text="@string/login_create_account"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/white"/>

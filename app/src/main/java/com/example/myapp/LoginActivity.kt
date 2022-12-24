@@ -1,10 +1,14 @@
 package com.example.myapp
 
+import android.Manifest
 import android.R.attr
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.myapp.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -26,6 +30,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var googleAccount: GoogleSignInAccount
 
+    private val permissionCode = 101
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,8 +47,8 @@ class LoginActivity : AppCompatActivity() {
         binding.registerPage.setOnClickListener {
             updateUI("register")
         }
-        binding.btnlogin.setOnClickListener {
-            val email = binding.eEmail.text.toString()
+        binding.btnLogin.setOnClickListener {
+            val email = binding.loginEmail.text.toString()
             val pass = binding.loginPass.text.toString()
 
             if (email.isNotEmpty() && pass.isNotEmpty()) {
@@ -63,7 +69,7 @@ class LoginActivity : AppCompatActivity() {
             signInGoogle()
 
         }
-
+        requestLocationPermission()
 
     }
 
@@ -122,6 +128,18 @@ class LoginActivity : AppCompatActivity() {
         if (activity == "login") {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+        }
+    }
+    /*
+     * Request location permission,not handling the results here
+     * its done in the MapsActivity by a callback
+     */
+    private fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                permissionCode)
         }
     }
 }

@@ -13,13 +13,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/login_welcome"
+            android:id="@+id/registerTitle"
             android:layout_width="218dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="40dp"
-            android:text="@string/login_welcome"
+            android:text="@string/register_title"
             android:textColor="@color/white"
             android:textSize="25sp"
             android:textStyle="bold"
@@ -33,39 +33,39 @@
             android:textAlignment="textStart">
 
             <EditText
-                android:id="@+id/editFName"
+                android:id="@+id/registerFName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:ems="10"
-                android:hint="@string/registerFirstName"
+                android:hint="@string/register_first_name"
                 android:inputType="textPersonName"
                 android:textColorHint="@color/Gray"
                 android:textColor="@color/Black"
                 android:layout_gravity="end"
                 android:paddingTop="10dp" />
             <EditText
-                android:id="@+id/editLName"
+                android:id="@+id/registerLName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:ems="10"
-                android:hint="@string/registerLastName"
+                android:hint="@string/register_last_name"
                 android:inputType="textPersonName"
                 android:textColorHint="@color/Gray"
                 android:textColor="@color/Black"
                 android:layout_gravity="end"
                 android:paddingTop="10dp" />
             <EditText
-                android:id="@+id/editEmail"
+                android:id="@+id/registerEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:ems="10"
-                android:hint="@string/registerEmail"
+                android:hint="@string/register_email"
                 android:inputType="textEmailAddress"
                 android:textColorHint="@color/Gray"
                 android:textColor="@color/Black"
@@ -73,7 +73,7 @@
                 android:paddingTop="10dp" />
 
             <EditText
-                android:id="@+id/editPass"
+                android:id="@+id/registerPass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -81,19 +81,19 @@
                 android:textColor="@color/Black"
                 android:ems="10"
                 android:layout_gravity="end"
-                android:hint="@string/registerPassword"
+                android:hint="@string/register_password"
                 android:textColorHint="@color/Gray"
                 android:inputType="textPassword"
                 android:textDirection="locale" />
 
             <TextView
-                android:id="@+id/loginPage"
+                android:id="@+id/registerLoginPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="end"
-                android:layout_marginRight="15dp"
-                android:text="@string/registerHaveAccountLogin"
+                android:layout_marginEnd="15dp"
+                android:text="@string/register_login"
                 android:textColor="#36073E" />
 
             <Button
@@ -103,7 +103,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp"
                 android:background="#9C27B0"
-                android:text="@string/registerSignUp"
+                android:text="@string/register_btn_signup"
                 android:textAllCaps="false" />
 
 
