@@ -64,6 +64,9 @@ dependencies {
     //card view
     implementation('androidx.cardview:cardview:1.0.0')
     implementation 'com.google.android.material:material:1.7.0'
+    //real time firebase
+    implementation 'com.google.firebase:firebase-database-ktx'
+
 }
 
 

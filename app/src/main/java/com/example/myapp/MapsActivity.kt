@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapp.MathChallenge
+import com.example.myapp.Model.MarkerModel
 import com.example.myapp.databinding.ActivityMapsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
 
@@ -53,8 +56,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private val KEY_CAMERA_POSITION = "camera_position"
     private val KEY_LOCATION = "location"
 
-    //
+    //companion onject
     private lateinit var cameraPosition: CameraPosition
+    // Realtime database variable
+    private lateinit var dbRef: DatabaseReference
+   // private lateinit var markers:List<MarkerModel>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +82,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
         }
+        dbRef = FirebaseDatabase.getInstance().getReference("Markers")
+        //load markers from database
+
 
         getUserCurrentLocation()
         /* manage view */
@@ -90,7 +100,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
 
     }
-    //if there is no location permission then ask from the user permission and get current location
+    // if there is no location permission then ask from the user permission and get current location
     private fun getUserCurrentLocation(){
         if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
             !=PackageManager.PERMISSION_GRANTED &&
@@ -153,10 +163,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 val location = LatLng(latlng.latitude, latlng.longitude)
                 if(!clicked) {// can add only one marker in each "addChallenge" text clicked
                     clicked = true
+                    val markerId = dbRef.push().key!!
+                    val game= MarkerModel("Calculator",latlng.latitude,latlng.longitude,0,0)
+                    dbRef.child(markerId).setValue(game)
+                        .addOnCompleteListener {
+                            Log.e( "www","Marker was add to DB successfully")
+                        }.addOnFailureListener { err ->
+                            Log.e( "mmm","Marker was add to DB successfully")
+                        }
                      mMap.addMarker(MarkerOptions().position(location))!!
                     Toast.makeText(this, "success ", Toast.LENGTH_SHORT).show()
-                }
-                else{
+
 
                 }
 
@@ -208,6 +225,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         }
         markerPopUp.show()
         return true
+    }
+    private fun startRandomChallenge(){
+
+    }
+
+    private fun loadMarkers(){
+
     }
 
 }
