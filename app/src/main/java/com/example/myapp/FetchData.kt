@@ -1,5 +1,6 @@
 package com.example.myapp
 
+import android.util.Log
 import com.example.myapp.Model.Challenges
 import com.example.myapp.Model.MarkerModel
 import com.example.myapp.Model.Users
@@ -62,8 +63,7 @@ class FetchData {
         })
         return temp1
     }
-    private fun getDescription(name : String?): String  {
-
+     fun getDescription(name : String?): String  {
 
 
         var temp1=""
@@ -74,9 +74,11 @@ class FetchData {
                 if (snapshot.exists()) {
                     for (empSnap in snapshot.children) {
                         val userData = empSnap.getValue(Challenges::class.java)
-                        if(userData!=null && userData.challenge_Name=="$name")
+                        if(userData!=null && userData.challenge_Name==name)
                         {
+
                             temp1= userData.challenge_description.toString()
+
                         }
                     }
                 }
@@ -85,13 +87,14 @@ class FetchData {
                 TODO("Not yet implemented")
             }
         })
+         Log.e("rrrrrrr", "the string is :$temp1")
         return temp1
     }
 
 
 
     // Returns all the info of all the markers placed
-    private fun Markers_location(): List<Any>  {
+     fun Markers_location(): List<MarkerModel>  {
         val markers_list = arrayListOf<MarkerModel>()
         dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         dbRef.addValueEventListener(object : ValueEventListener {

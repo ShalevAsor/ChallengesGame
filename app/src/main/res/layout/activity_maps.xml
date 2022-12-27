@@ -22,31 +22,25 @@
         android:id="@+id/map_bar"
         android:background="@drawable/main_map_tool_bar_bg"
         android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/top_score"
-            android:layout_gravity="center"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/Black"
-            android:text="@string/topScore"
-            android:textAlignment="center"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/mapAddChallenge"
-            android:paddingStart="15dp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/Black"
-            android:text="@string/map_add_challenge"
-            android:textAlignment="center"
-            tools:ignore="RtlSymmetry" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:layout_gravity="end"
+            android:text="@string/topScoreBtn"
+            android:id="@+id/topScoresBtn"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:text="@string/map_add_challenge"
+            android:id="@+id/addChallengeBtn" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_gravity="center"
             android:text="@string/map_main_page"
             android:id="@+id/mapMainBtn"
            />

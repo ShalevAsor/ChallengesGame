@@ -23,48 +23,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/challenge_name"
-        android:text="@string/challenge_name"
+        android:text="@string/select_challenge"
         android:layout_gravity="center"
         android:textSize="30sp"
         android:textColor="@color/white"
         android:textStyle="bold" />
-
-    <LinearLayout
+    <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/challenge_spinner"/>
 
 
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/challenge_topScore"
-            android:text="@string/top_score"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/challenge_description"
-            android:text="@string/description"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-    </LinearLayout>
     <Button
-        android:id="@+id/marker_start"
+        android:id="@+id/set_challenge"
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:background="#9C27B0"
-        android:text="@string/start"
+        android:text="@string/set_challenge"
         android:textAllCaps="false" />
-
 
 
 </LinearLayout>

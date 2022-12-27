@@ -219,4 +219,11 @@
         <item>@drawable/zambia</item>
         <item>@drawable/zimbabwe</item>
     </array>
+    <string-array name="challenges">
+        <item>@string/calculator</item>
+        <item>@string/guess_the_flag</item>
+        <item>@string/clicker</item>
+
+    </string-array>
+
 </resources>

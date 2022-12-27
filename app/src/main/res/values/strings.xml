@@ -31,6 +31,21 @@
     <string name="main_map">Map</string>
     <string name="main_log_out">Log out</string>
     <string name="map_main_page">main page</string>
+    <!-- Strings Popup challenge -->
+    <string name="challenge_name">Challenge Name:</string>
+    <string name="top_score">Top score:</string>
+    <string name="description">Description:</string>
+    <string name="start">Start</string>
+    <!-- Strings Popup select challenge -->
+    <string name="set_challenge">Set Challenge</string>
+    <string name="select_challenge">Select Challenge</string>
+    <!-- Strings Challenges name -->
+    <string name="calculator">Calculator</string>
+    <string name="guess_the_flag">Guess the flag</string>
+    <string name="clicker">Clicker</string>
+    <!-- Strings Map -->
+    <string name="topScoreBtn">Top Scores</string>
+
 
 
 </resources>
