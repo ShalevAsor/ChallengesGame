@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.myapp.Model.MarkerModel
+import com.example.myapp.Model.MyItem
 import com.example.myapp.databinding.ActivityMapsBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -30,6 +31,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.maps.android.clustering.ClusterManager
 import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
@@ -41,29 +43,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     //map variables
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private lateinit var currentLocation :Location
+    private lateinit var currentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val permissionCode = 101
+
     //view variables
-    private lateinit var currMarker:Marker
+    private lateinit var currMarker: Marker
     private lateinit var markerPopUp: Dialog
-    private lateinit var addMarkerPupUp:Dialog
-    lateinit var addChallenge: View // floating button
+    private lateinit var addMarkerPupUp: Dialog
+    private lateinit var addChallenge: View // floating button add challenge
+    private lateinit var focusLocation: View // focus the camera floatin button
+
     //models
     private lateinit var markers: List<MarkerModel>
-    private lateinit var challengeSelected:String
+    private lateinit var challengeSelected: String
     private lateinit var fetchData: FetchData
+
     //indicators
     private var clicked = false//allows only one click on the map when adding marker
+
     //const variables
     private val radius = 500.0
     private val defaultZoom = 12f
-   //general
-    private lateinit var mContext:Context
+
+    //general
+    private lateinit var mContext: Context
+
     //drawer navigation
     lateinit var drawerLayout: DrawerLayout
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
+
+    //allows to make a collection of markers with smoother view
+    private lateinit var clusterManager: ClusterManager<MyItem>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,12 +86,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         setContentView(binding.root)
         //floating action button
         addChallenge = findViewById(R.id.addChallengeBtn)
+        focusLocation = findViewById(R.id.focus_camera_location_btn)
 
         /* drawer layout instance to toggle the menu icon to open
          drawer and back button to close drawer */
         drawerLayout = findViewById(R.id.my_drawer_layout)
         navigationView = findViewById(R.id.nav_view)
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+        actionBarDrawerToggle =
+            ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
 
         // pass the Open and Close toggle for the drawer layout listener
         // to toggle the button
@@ -89,17 +103,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // handle the navigation item click
         navigationView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.nav_profile -> {
                     Toast.makeText(mContext, "handle profile here", Toast.LENGTH_SHORT).show()
                 }
-                R.id.nav_top_scores ->{
-                    Toast.makeText(mContext, "handle topscores here", Toast.LENGTH_SHORT).show()
+                R.id.nav_top_scores -> {
+                    Toast.makeText(mContext, "handle top scores here", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_logout -> {
                     firebaseAuth.signOut()
                     signOutGoogle()
-                    val intent = Intent(this,LoginActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                     finishAffinity()
                 }
@@ -126,7 +140,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             super.onOptionsItemSelected(item)
-        } else{
+        } else {
             true
         }
     }
@@ -136,28 +150,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
      * then init the currentLocation and sync the map
      */
     // if there is no location permission then ask from the user permission and get current location
-    private fun getUserCurrentLocation(){
-        if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
-            !=PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)!=
-            PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),permissionCode)
+    private fun getUserCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                permissionCode
+            )
             return
         }
 
-        val getLocation = fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                location ->
-            if(location != null){
-                currentLocation  = location
+        val getLocation =
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    currentLocation = location
 
 
-                // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                val mapFragment = supportFragmentManager
-                    .findFragmentById(R.id.map) as SupportMapFragment
-                mapFragment.getMapAsync(this)
+                    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+                    val mapFragment = supportFragmentManager
+                        .findFragmentById(R.id.map) as SupportMapFragment
+                    mapFragment.getMapAsync(this)
+                }
             }
-        }
     }
+
     /* when the user gave permission get the user location */
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -165,8 +191,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
-            permissionCode -> if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        when (requestCode) {
+            permissionCode -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getUserCurrentLocation()
             }
         }
@@ -182,33 +208,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         mMap = googleMap
         mMap.setOnMarkerClickListener(this)
         // Get the current location of the device and set the position of the map.
-        val latLng = LatLng(currentLocation.latitude,currentLocation.longitude)
+        val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
         val markerOptions = MarkerOptions().position(latLng).title("My location!")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinicon))
 
         //set map camera focus on the user location
 
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15.0f))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
         val markerTag = UUID.randomUUID().toString()
         currMarker = mMap.addMarker(markerOptions)!!
         currMarker.tag = markerTag
+        currMarker.title = "My location!"
+        currMarker.showInfoWindow()
 
         //set markers from database
         setMarkersOnMap()
 
         //get clicked location and add new marker
-        addChallenge.setOnClickListener{
-            Toast.makeText(this,"Click on desired location ",Toast.LENGTH_LONG).show()
+        addChallenge.setOnClickListener {
+            Toast.makeText(this, "Click on desired location ", Toast.LENGTH_LONG).show()
             clicked = false
             mMap.setOnMapClickListener { latlng ->
                 val location = LatLng(latlng.latitude, latlng.longitude)
-                if(!clicked) {// can add only one marker in each "addChallenge" text clicked
+                if (!clicked) {// can add only one marker in each "addChallenge" text clicked
                     clicked = true
                     challengeSelected = "Clicker" //DEFAULT
-                    setAddChallengeDialog(markerTag,location)//in the future add top score here
+                    setAddChallengeDialog(markerTag, location)//in the future add top score here
 
                 }
             }
+        }
+        focusLocation.setOnClickListener{
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
         }
     }
 
@@ -226,12 +259,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         personalScore: Int
     ) {
         val markerId = dbRef.push().key!!
-        val game = MarkerModel(markerTag,challengeSelected ,challengeDescription,latitude,longitude,topScore,personalScore)
+        val game = MarkerModel(
+            markerTag,
+            challengeSelected,
+            challengeDescription,
+            latitude,
+            longitude,
+            topScore,
+            personalScore
+        )
         dbRef.child(markerId).setValue(game)
             .addOnCompleteListener {
-                Log.e( "www","Marker was add to DB successfully")
+                Log.e("www", "Marker was add to DB successfully")
             }.addOnFailureListener { err ->
-                Log.e( "mmm","Marker was add to DB successfully")
+                Log.e("mmm", "Marker was add to DB successfully")
             }
     }
 
@@ -263,8 +304,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     override fun onMarkerClick(p0: Marker): Boolean {
         //load marker dialog
+        if(p0.tag.toString()== currMarker.tag){
+            //user clicked on my location icon
+            Log.e("visited1","curr marker is visiter")
+            p0.title = "My Location!"
+            p0.showInfoWindow()
+        }
         val markerModel = getMarkerModel(p0.tag.toString())
-        setDialog(markerModel)
+        if (markerModel != null) {
+            if(markerModel.marker_id != currMarker.tag) {
+                setDialog(markerModel)
+                Log.e("visited2","curr marker is visiter")
+            }
+        }
         return true
     }
 
@@ -273,7 +325,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
      * also the challenge information will display at this dialog
      */
 
-    private fun setDialog(marker:MarkerModel?) {
+    private fun setDialog(marker: MarkerModel?) {
         // set view and view objects
         markerPopUp = Dialog(this)
         markerPopUp.setCancelable(false)
@@ -291,10 +343,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             challengeName.text = marker.chall_name
         }
         //close dialog here
-        btnCloseDialog.setOnClickListener{
+        btnCloseDialog.setOnClickListener {
             markerPopUp.dismiss()
         }
-        btnStartChallenge.setOnClickListener{
+        btnStartChallenge.setOnClickListener {
             //add code to start game here
             startChallenge(marker)
         }
@@ -307,10 +359,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     private fun startChallenge(marker: MarkerModel?) {
         if (marker != null) {
-            val intent:Intent
-            when(marker.chall_name){
+            val intent: Intent
+            when (marker.chall_name) {
                 "Guess the flag" -> {
-                   intent = Intent(this, FlagChallenge::class.java)
+                    intent = Intent(this, FlagChallenge::class.java)
                     startActivity(intent)
                 }
                 "Calculator" -> {
@@ -334,7 +386,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     startActivity(intent)
                 }
                 else -> {
-                    Log.e("challenge","Filed loading a challenge")
+                    Log.e("challenge", "Filed loading a challenge")
                     intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 }
@@ -349,8 +401,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
      */
 
     private fun getMarkerModel(id: String): MarkerModel? {
-        for(marker in markers){
-            if(id == marker.marker_id){
+        for (marker in markers) {
+            if (id == marker.marker_id) {
                 return marker
             }
         }
@@ -360,11 +412,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     /**
      * This method add the markers from the markers list  to the map
      */
-    private fun setMarkersOnMap(){
-        for(marker in markers){
+    private fun setMarkersOnMap() {
+        for (marker in markers) {
             //add check in case that the marker ttl is over
-            val latLng = LatLng(marker.lat as Double,marker.long as Double)
-            val markerOptions = MarkerOptions().position(latLng)
+            val latLng = LatLng(marker.lat as Double, marker.long as Double)
+            val iconID = getMarkerIcon(marker.chall_name as String)
+            val markerOptions = MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(iconID))
+            //setUpClusterer(marker)
             mMap.addMarker(markerOptions)?.tag = marker.marker_id
         }
     }
@@ -373,7 +427,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
      * This method display the user dialog that allows to choose the specific challenge
      * to add to the map
      */
-    private fun setAddChallengeDialog(markerTag:String,markerLocation: LatLng) {
+    private fun setAddChallengeDialog(markerTag: String, markerLocation: LatLng) {
         addMarkerPupUp = Dialog(mContext)
         addMarkerPupUp.setCancelable(false)
         addMarkerPupUp.setContentView(R.layout.add_marker_popup)
@@ -398,12 +452,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
                     //wait for the user to click "select"
                     btnSetChallenge.setOnClickListener {
+                        val markerIconID = getMarkerIcon(challengeSelected)
                         val challengeDescription = getDescription(challengeSelected)
-                        currMarker = mMap.addMarker(MarkerOptions().position(markerLocation))!!
+                        currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
+                            BitmapDescriptorFactory.fromResource(markerIconID)
+                        ))!!
                         currMarker.tag = markerTag
                         Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
                         //add to database
-                        addMarkerToDatabase(markerTag,challengeSelected ,challengeDescription,markerLocation.latitude,markerLocation.longitude,0,0)
+                        addMarkerToDatabase(
+                            markerTag,
+                            challengeSelected,
+                            challengeDescription,
+                            markerLocation.latitude,
+                            markerLocation.longitude,
+                            0,
+                            0
+                        )
                     }
                 }
 
@@ -418,11 +483,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         }
     }
 
-    private fun getDescription(name:String):String{
+    private fun getDescription(name: String): String {
         val challenges = resources.getStringArray(R.array.challenges_description)
-        for(challenge in challenges){
+        for (challenge in challenges) {
             val challengePair = challenge.split(":")
-            if(challengePair[0] == name){
+            if (challengePair[0] == name) {
                 return challengePair[1]
             }
         }
@@ -430,8 +495,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     }
 
 
-
-    private fun signOutGoogle(){
+    private fun signOutGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
 
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -439,5 +503,65 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     }
 
+    /**
+     * This method return the marker icon id depend the name of the given challenge
+     */
 
+    private fun getMarkerIcon(name:String):Int {
+        when(name){
+            "Guess the flag" -> {
+                return R.drawable.flagicon
+            }
+            "Calculator" -> {
+                return R.drawable.calcuicon
+            }
+            "Clicker" -> {
+                return R.drawable.clickericon
+            }
+            "Guess The City" -> {
+                return R.drawable.cityicon
+            }
+            "Logo Challenge" -> {
+                return R.drawable.logoicon
+            }
+            "Tap The Number" -> {
+                return R.drawable.numbericon
+            }
+            else -> {
+                Log.e("icons", "Filed loading icon")
+                return R.drawable.pinicon
+            }
+
+        }
+    }
+    //    private fun setUpClusterer(marker:MarkerModel) {
+//        // Initialize the manager with the context and the map.
+//        // (Activity extends context, so we can pass 'this' in the constructor.)
+//        clusterManager = ClusterManager(mContext, mMap)
+//
+//        // Point the map's listeners at the listeners implemented by the cluster
+//        // manager.
+//        mMap.setOnCameraIdleListener(clusterManager)
+//        //mMap.setOnMarkerClickListener(clusterManager)
+//
+//        // Add cluster items (markers) to the cluster manager.
+//        addItems(marker)
+//    }
+//
+//    private fun addItems(markerModel: MarkerModel) {
+//
+//
+//        // Create a cluster item for the marker and set the title and snippet using the constructor.
+//        val infoWindowItem = MyItem(markerModel.lat as Double, markerModel.long as Double, markerModel.chall_name as String
+//            ,markerModel.chall_description as  String)
+//
+//        // Add the cluster item (marker) to the cluster manager.
+//        clusterManager.addItem(infoWindowItem)
+//        }
+//    }
 }
+
+
+
+
+

@@ -18,6 +18,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".MapsActivity" >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="bottom|right"
+                    android:layout_marginRight="@dimen/fab_margin"
+                    android:layout_marginBottom="@dimen/fab_margin"
+                    app:layout_dodgeInsetEdges="bottom">
+
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/addChallengeBtn"
@@ -25,8 +34,19 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
                     android:src="@drawable/location"
+                    android:backgroundTint="@color/white"
                     android:contentDescription="@string/add_challenge"
                     android:layout_margin="16dp" />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/focus_camera_location_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:backgroundTint="#2196F3"
+                    android:src="@drawable/targeticon"
+                    android:contentDescription="@string/add_challenge"
+                    android:layout_margin="16dp" />
+                </LinearLayout>
 
         </fragment>
 
