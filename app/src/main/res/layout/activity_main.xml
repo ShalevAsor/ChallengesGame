@@ -34,6 +34,7 @@
 
 
 
+
             <Button
                 android:id="@+id/main_map_btn"
                 android:layout_width="200dp"
@@ -52,6 +53,11 @@
                 android:background="#9C27B0"
                 android:text="@string/main_log_out"
                 android:textAllCaps="false" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/main_user_info"
+                android:layout_gravity="center_horizontal"/>
 
 
 

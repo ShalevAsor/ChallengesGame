@@ -30,14 +30,14 @@ class RegisterActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         //allows to go to login page
-        binding.registerLoginPage.setOnClickListener{
+        binding.registerPage.setOnClickListener{
             val intent = Intent(this,LoginActivity::class.java)
             startActivity(intent)
         }
 
 
         // set user information  - not loading to db yet
-        binding.btnSigUp.setOnClickListener{
+        binding.btnSignUp.setOnClickListener{
             val email = binding.registerEmail.text.toString()
             val fName = binding.registerFName.text.toString()
             val lName = binding.registerLName.text.toString()
@@ -54,11 +54,17 @@ class RegisterActivity : AppCompatActivity() {
                 firebaseAuth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener{
                     if(it.isSuccessful){
 
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
 
                         //insert User data to our real time data base
-                        dbRef.child(userId).setValue(full_user).addOnCompleteListener{Toast.makeText(this, "Data inserted successfully", Toast.LENGTH_LONG).show()}
+                        if (userId != null) {
+                            dbRef.child(userId).setValue(full_user).addOnCompleteListener{Toast.makeText(this, "Data inserted successfully", Toast.LENGTH_LONG).show()}
+                        }
                         //insert user info into billboard table
-                        dbRef_2.child(userId).setValue(user_billboard).addOnCompleteListener{}
+                        if (userId != null) {
+                            dbRef_2.child(userId).setValue(user_billboard).addOnCompleteListener{}
+                        }
                         val intent = Intent(this,LoginActivity::class.java)
                         startActivity(intent)
                     }

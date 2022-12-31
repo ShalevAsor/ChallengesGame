@@ -16,6 +16,7 @@ class FetchData {
 
 
 
+
     // Get last name by "Email"
     private fun getLastname(name : String?): String  {
         firebaseAuth = FirebaseAuth.getInstance()
@@ -115,6 +116,7 @@ class FetchData {
         })
         return markers_list
     }
+
 
 
 

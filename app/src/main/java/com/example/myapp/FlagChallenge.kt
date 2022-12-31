@@ -1,25 +1,35 @@
 package com.example.myapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 
 class FlagChallenge : AppCompatActivity() {
-    var counter_for_right_answers=0
-
+    private var counter_for_right_answers=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getSupportActionBar()?.hide()
         setContentView(R.layout.activity_flag_challenge)
 
         var time_in_sec=15;
         val timer = object: CountDownTimer(15000, 1000) {
+            @SuppressLint("WrongViewCast")
             override fun onTick(millisUntilFinished: Long) {
                 println("$time_in_sec sec")
+
+                val timeView: TextView = findViewById(R.id.timeView) as TextView
+                timeView.text="Time left: $time_in_sec"
+
+                val scoreView: TextView = findViewById(R.id.scoreView) as TextView
+                scoreView.text="Score: $counter_for_right_answers"
+
                 time_in_sec--
             }
 
@@ -78,7 +88,6 @@ class FlagChallenge : AppCompatActivity() {
         imageView.setTag(flags_list[random_of_fake_flag_num3])
         var fake_flag_name3 = resources.getResourceName(imageView.getTag() as Int)
         fake_flag_name3=fake_flag_name3.substring(fake_flag_name3.indexOf('/')+1).replace('_',' ')
-
 
         val right_button = (1..4).random() // getting a random number to place the right answer
 

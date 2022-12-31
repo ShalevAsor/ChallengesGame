@@ -1,111 +1,140 @@
 package com.example.myapp
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.TypedArray
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.util.Log.DEBUG
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.myapp.BuildConfig.DEBUG
-import com.example.myapp.MathChallenge
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.myapp.Model.MarkerModel
 import com.example.myapp.databinding.ActivityMapsBinding
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
 
+    //firebase variables
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var dbRef: DatabaseReference
+
+    //map variables
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var currentLocation :Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val permissionCode = 101
-    private lateinit var markers: List<MarkerModel>
+    //view variables
     private lateinit var currMarker:Marker
     private lateinit var markerPopUp: Dialog
     private lateinit var addMarkerPupUp:Dialog
-    private lateinit var mContext:Context
+    lateinit var addChallenge: View // floating button
+    //models
+    private lateinit var markers: List<MarkerModel>
     private lateinit var challengeSelected:String
+    private lateinit var fetchData: FetchData
+    //indicators
+    private var clicked = false//allows only one click on the map when adding marker
+    //const variables
     private val radius = 500.0
     private val defaultZoom = 12f
-    // for map custom design
-
-    lateinit var menu_bar: LinearLayout
-    lateinit var addChallenge: TextView
-    // indicator - allows only one click on the map when adding marker
-    private var clicked = false
-    private var locationPermissionGranted = false
-    private lateinit var fetchData: FetchData
-
-    private val KEY_CAMERA_POSITION = "camera_position"
-    private val KEY_LOCATION = "location"
-
-    //companion onject
-    private lateinit var cameraPosition: CameraPosition
-    // Realtime database variable
-    private lateinit var dbRef: DatabaseReference
-   // private lateinit var markers:List<MarkerModel>
-
+   //general
+    private lateinit var mContext:Context
+    //drawer navigation
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
+    private lateinit var navigationView: NavigationView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /* init view */
         mContext = this
-        /* set layer  */
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-        menu_bar = findViewById(R.id.map_bar)
+        //floating action button
         addChallenge = findViewById(R.id.addChallengeBtn)
 
+        /* drawer layout instance to toggle the menu icon to open
+         drawer and back button to close drawer */
+        drawerLayout = findViewById(R.id.my_drawer_layout)
+        navigationView = findViewById(R.id.nav_view)
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+        // to make the Navigation drawer icon always appear on the action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        // handle the navigation item click
+        navigationView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.nav_profile -> {
+                    Toast.makeText(mContext, "handle profile here", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_top_scores ->{
+                    Toast.makeText(mContext, "handle topscores here", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_logout -> {
+                    firebaseAuth.signOut()
+                    signOutGoogle()
+                    val intent = Intent(this,LoginActivity::class.java)
+                    startActivity(intent)
+                    finishAffinity()
+                }
+            }
+            true
+        }
+        /* init firebase variables */
+        firebaseAuth = FirebaseAuth.getInstance()
+        dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         //save device last location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // go to main page
-        binding.mapMainBtn.setOnClickListener {
-            val intent = Intent(this,MainActivity::class.java)
-            startActivity(intent)
-        }
-        dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         //load markers from database
         fetchData = FetchData()
         markers = fetchData.Markers_location()
-
+        setMarkersOnMap()
         getUserCurrentLocation()
-        /* manage view */
-        // go to main page
-        binding.mapMainBtn.setOnClickListener {
-            val intent = Intent(this,MainActivity::class.java)
-            startActivity(intent)
-        }
-        //add top scores btn here
-
     }
+
+    /**
+     * This method allows the user to click on the menu button (the three lines on the
+     * top left side )
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            super.onOptionsItemSelected(item)
+        } else{
+            true
+        }
+    }
+
+    /**
+     * This method ask location permissions from the user iff there arent permissions
+     * then init the currentLocation and sync the map
+     */
     // if there is no location permission then ask from the user permission and get current location
     private fun getUserCurrentLocation(){
         if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -120,12 +149,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 location ->
             if(location != null){
                 currentLocation  = location
-                Toast.makeText(this,currentLocation .latitude.toString() + " " +
-                        currentLocation .longitude.toString(), Toast.LENGTH_LONG).show()
+
 
                 // Obtain the SupportMapFragment and get notified when the map is ready to be used.
                 val mapFragment = supportFragmentManager
-                    .findFragmentById(R.id.map_frag) as SupportMapFragment
+                    .findFragmentById(R.id.map) as SupportMapFragment
                 mapFragment.getMapAsync(this)
             }
         }
@@ -170,8 +198,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         //get clicked location and add new marker
         addChallenge.setOnClickListener{
-
-
             Toast.makeText(this,"Click on desired location ",Toast.LENGTH_LONG).show()
             clicked = false
             mMap.setOnMapClickListener { latlng ->
@@ -237,7 +263,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     override fun onMarkerClick(p0: Marker): Boolean {
         //load marker dialog
-        Log.e("ttt",p0.tag.toString())
         val markerModel = getMarkerModel(p0.tag.toString())
         setDialog(markerModel)
         return true
@@ -296,6 +321,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     intent = Intent(this, ButtonChallenge::class.java)
                     startActivity(intent)
                 }
+                "Guess The City" -> {
+                    intent = Intent(this, GussTheCityChallenge::class.java)
+                    startActivity(intent)
+                }
+                "Logo Challenge" -> {
+                    intent = Intent(this, LogoChallenge::class.java)
+                    startActivity(intent)
+                }
+                "Tap The Number" -> {
+                    intent = Intent(this, TapTheNumChallenge::class.java)
+                    startActivity(intent)
+                }
                 else -> {
                     Log.e("challenge","Filed loading a challenge")
                     intent = Intent(this, MainActivity::class.java)
@@ -320,10 +357,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         return null
     }
 
-    private fun startRandomChallenge(){
-
-    }
-
     /**
      * This method add the markers from the markers list  to the map
      */
@@ -331,9 +364,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         for(marker in markers){
             //add check in case that the marker ttl is over
             val latLng = LatLng(marker.lat as Double,marker.long as Double)
-            val markerOptions = MarkerOptions().position(latLng).title("My location!")
+            val markerOptions = MarkerOptions().position(latLng)
             mMap.addMarker(markerOptions)?.tag = marker.marker_id
-
         }
     }
 
@@ -363,9 +395,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     view: View, position: Int, id: Long
                 ) {
                     challengeSelected = challenges[position]
+
                     //wait for the user to click "select"
                     btnSetChallenge.setOnClickListener {
-                        val challengeDescription = fetchData.getDescription(challengeSelected)
+                        val challengeDescription = getDescription(challengeSelected)
                         currMarker = mMap.addMarker(MarkerOptions().position(markerLocation))!!
                         currMarker.tag = markerTag
                         Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
@@ -385,5 +418,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         }
     }
 
+    private fun getDescription(name:String):String{
+        val challenges = resources.getStringArray(R.array.challenges_description)
+        for(challenge in challenges){
+            val challengePair = challenge.split(":")
+            if(challengePair[0] == name){
+                return challengePair[1]
+            }
+        }
+        return "Exception"
+    }
+
+
+
+    private fun signOutGoogle(){
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient.signOut()
 
     }
+
+
+}

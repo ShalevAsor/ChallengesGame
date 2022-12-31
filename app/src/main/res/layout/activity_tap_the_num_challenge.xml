@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/appbackground_65_nature_outdoors"
+    tools:context=".TapTheNumChallenge">
+
+    <AbsoluteLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="Deprecated"
+        tools:layout_editor_absoluteY="108dp">
+
+        <Button
+            android:id="@+id/b1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_x="0dp"
+            android:layout_y="0dp"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/b2"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_x="0dp"
+            android:layout_y="0dp"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/b3"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_x="0dp"
+            android:layout_y="0dp"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/b4"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_x="0dp"
+            android:layout_y="0dp"
+            android:text="4" />
+
+        <Button
+            android:id="@+id/b5"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_x="0dp"
+            android:layout_y="0dp"
+            android:text="5" />
+
+        <TextView
+            android:id="@+id/theScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="280dp"
+            android:layout_y="700dp"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:text="score: 0" />
+
+        <TextView
+            android:id="@+id/theTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="45dp"
+            android:layout_y="701dp"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:text="Time left: 20" />
+    </AbsoluteLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

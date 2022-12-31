@@ -219,11 +219,158 @@
         <item>@drawable/zambia</item>
         <item>@drawable/zimbabwe</item>
     </array>
+
+    <array name="cities">
+        <item>@drawable/abu_dhabi</item>
+        <item>@drawable/addis_ababa</item>
+        <item>@drawable/amsterdam</item>
+        <item>@drawable/antalya</item>
+        <item>@drawable/atlanta</item>
+        <item>@drawable/bangkok</item>
+        <item>@drawable/barcelona</item>
+        <item>@drawable/basel</item>
+        <item>@drawable/beijing</item>
+        <item>@drawable/bern</item>
+        <item>@drawable/brussels</item>
+        <item>@drawable/busan</item>
+        <item>@drawable/cape_town</item>
+        <item>@drawable/chengdu</item>
+        <item>@drawable/chicago</item>
+        <item>@drawable/copenhagen</item>
+        <item>@drawable/delhi</item>
+        <item>@drawable/dubai</item>
+        <item>@drawable/dublin</item>
+        <item>@drawable/edinburgh</item>
+        <item>@drawable/eilat</item>
+        <item>@drawable/glasgow</item>
+        <item>@drawable/haifa</item>
+        <item>@drawable/helsinki</item>
+        <item>@drawable/hong_kong</item>
+        <item>@drawable/honolulu</item>
+        <item>@drawable/istanbul</item>
+        <item>@drawable/jerusalem</item>
+        <item>@drawable/johannesburg</item>
+        <item>@drawable/kinshasa</item>
+        <item>@drawable/kuala_lumpur</item>
+        <item>@drawable/lagos</item>
+        <item>@drawable/libreville</item>
+        <item>@drawable/lisbon</item>
+        <item>@drawable/liverpool</item>
+        <item>@drawable/london</item>
+        <item>@drawable/los_angeles</item>
+        <item>@drawable/luxembourg</item>
+        <item>@drawable/macau</item>
+        <item>@drawable/madrid</item>
+        <item>@drawable/medell_n</item>
+        <item>@drawable/melbourne</item>
+        <item>@drawable/mexico_city</item>
+        <item>@drawable/miami</item>
+        <item>@drawable/montreal</item>
+        <item>@drawable/munich</item>
+        <item>@drawable/nagoya</item>
+        <item>@drawable/new_york</item>
+        <item>@drawable/osaka</item>
+        <item>@drawable/oslo</item>
+        <item>@drawable/paris</item>
+        <item>@drawable/porto</item>
+        <item>@drawable/prague</item>
+        <item>@drawable/qingdao</item>
+        <item>@drawable/rome</item>
+        <item>@drawable/san_francisco</item>
+        <item>@drawable/san_miguel_de_allende</item>
+        <item>@drawable/seattle</item>
+        <item>@drawable/seoul</item>
+        <item>@drawable/shenyang</item>
+        <item>@drawable/singapore</item>
+        <item>@drawable/sofia</item>
+        <item>@drawable/sydney</item>
+        <item>@drawable/tel_aviv</item>
+        <item>@drawable/the_hague</item>
+        <item>@drawable/tokyo</item>
+        <item>@drawable/victoria</item>
+        <item>@drawable/vienna</item>
+        <item>@drawable/washington_dc</item>
+        <item>@drawable/yokohama</item>
+    </array>
+
+    <array name="logos">
+        <item>@drawable/adidas</item>
+        <item>@drawable/amazon</item>
+        <item>@drawable/android</item>
+        <item>@drawable/apple</item>
+        <item>@drawable/appsflyer</item>
+        <item>@drawable/asus</item>
+        <item>@drawable/at_t</item>
+        <item>@drawable/barcelona</item>
+        <item>@drawable/blackberry</item>
+        <item>@drawable/burger_king</item>
+        <item>@drawable/cisco</item>
+        <item>@drawable/coca_cola</item>
+        <item>@drawable/disney</item>
+        <item>@drawable/dominos</item>
+        <item>@drawable/emirates</item>
+        <item>@drawable/fastrack</item>
+        <item>@drawable/instagram</item>
+        <item>@drawable/intel</item>
+        <item>@drawable/kfc</item>
+        <item>@drawable/lays</item>
+        <item>@drawable/mako</item>
+        <item>@drawable/mastercard</item>
+        <item>@drawable/mcdonalds</item>
+        <item>@drawable/mercedes</item>
+        <item>@drawable/microsoft</item>
+        <item>@drawable/myspace</item>
+        <item>@drawable/nestle</item>
+        <item>@drawable/netflix</item>
+        <item>@drawable/nike</item>
+        <item>@drawable/pepsi</item>
+        <item>@drawable/picasa</item>
+        <item>@drawable/pinterest</item>
+        <item>@drawable/porsche</item>
+        <item>@drawable/realmadrid</item>
+        <item>@drawable/redbull</item>
+        <item>@drawable/reddit</item>
+        <item>@drawable/rss</item>
+        <item>@drawable/samsung</item>
+        <item>@drawable/shazam</item>
+        <item>@drawable/skullcandy</item>
+        <item>@drawable/skype</item>
+        <item>@drawable/soundcloud</item>
+        <item>@drawable/spotify</item>
+        <item>@drawable/starbucks</item>
+        <item>@drawable/stumbleupon</item>
+        <item>@drawable/tesla</item>
+        <item>@drawable/tiktok</item>
+        <item>@drawable/twitter</item>
+        <item>@drawable/unity</item>
+        <item>@drawable/unreal</item>
+        <item>@drawable/ups</item>
+        <item>@drawable/vimeo</item>
+        <item>@drawable/vodafone</item>
+        <item>@drawable/whatsapp</item>
+        <item>@drawable/wordpress</item>
+        <item>@drawable/yahoo</item>
+        <item>@drawable/youtube</item>
+    </array>
+
+
     <string-array name="challenges">
         <item>@string/calculator</item>
         <item>@string/guess_the_flag</item>
         <item>@string/clicker</item>
-
+        <item>@string/guess_the_city_challenge</item>
+        <item>@string/logo_challenge</item>
+        <item>@string/tap_the_number_challenge</item>
     </string-array>
+
+
+    <string-array name="challenges_description">
+        <item>Calculator:You have 15 seconds to pick the right solution for the equation</item>
+        <item>Guess the flag:You have 1 minute to guess as many correct flags </item>
+        <item>Clicker:You have 10 seconds to click as fast as you can </item>
+        <item>Logo Challenge:You have 30 seconds Pick the correct logo</item>
+        <item>Tap The Number:You have 30 seconds to tap the numbers 1 to 20 in order</item>
+    </string-array>
+
 
 </resources>
