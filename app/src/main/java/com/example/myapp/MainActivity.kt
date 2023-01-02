@@ -2,6 +2,8 @@ package com.example.myapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapp.Model.Users
 import com.example.myapp.databinding.ActivityMainBinding
@@ -20,12 +22,30 @@ class MainActivity : AppCompatActivity() {
     //
     private lateinit var user_id: String
     private lateinit var user: Users
+    //private var SPLASH_SCREEN_TIME_OUT:Long=2000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //set splash screen
+//        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         firebaseAuth = FirebaseAuth.getInstance()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ///
+//        Handler().postDelayed( Runnable() {
+//
+//            run() {
+//                val intent= Intent(this,
+//                    MapsActivity::class.java)
+//                //Intent is used to switch from one activity to another.
+//
+//                startActivity(intent)
+//                //invoke the SecondActivity.
+//                finish()
+//                //the current activity will get finished.
+//            }
+//        }, SPLASH_SCREEN_TIME_OUT)
         //init
         firebaseAuth = FirebaseAuth.getInstance()
         binding = ActivityMainBinding.inflate(layoutInflater)
