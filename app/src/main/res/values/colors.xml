@@ -8,7 +8,9 @@
     //login
 
     <!--colors for modern ui-->
-
+    <color name="_bg__android_large___1_ek2_color">#FFFFFF</color>
+    <color name="rectangle_1_color">#ffffff</color>
+    <color name="challenge_name_color">#000000</color>
     <!--colros for card-->
 
 </resources>

@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="325dp"
-    android:layout_height="225dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@drawable/login_corners_bg"
     android:orientation="vertical"
-    android:backgroundTint="@color/DimGray"
     android:padding="5dp">
+    <View
+        android:id="@+id/addmarker_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="350dp"
+        android:background="@drawable/addmarker_shape1">
+
+    </View>
+
+
 
     <TextView
         android:layout_width="30dp"
@@ -24,47 +31,62 @@
         android:layout_height="wrap_content"
         android:id="@+id/challenge_name"
         android:text="@string/challenge_name"
-        android:layout_gravity="center"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="25dp"
         android:textSize="30sp"
         android:textColor="@color/white"
         android:textStyle="bold" />
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="60dp"
+        android:background="@drawable/add_marker_line1"
+        android:backgroundTint="@color/white"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/challenge_description"
+        android:layout_width="272dp"
+        android:layout_height="97dp"
+        android:layout_gravity="center"
+        android:text="@string/description"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/challenge_topScore"
+        android:text="@string/top_score"
+        android:layout_gravity="center"
+        android:layout_marginTop="55dp"
 
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="140dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/add_marker_line1"
+        android:backgroundTint="@color/white"/>
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/challenge_topScore"
-            android:text="@string/top_score"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/challenge_description"
-            android:text="@string/description"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-    </LinearLayout>
     <Button
         android:id="@+id/marker_start"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:background="#9C27B0"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="40dp"
+        android:background="@color/white"
         android:text="@string/start"
+        android:textColor="@color/Black"
         android:textAllCaps="false" />
 
-
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>
