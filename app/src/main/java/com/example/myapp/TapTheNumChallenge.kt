@@ -1,18 +1,22 @@
 package com.example.myapp
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
+import java.util.logging.Logger
+
 
 class TapTheNumChallenge : AppCompatActivity() {
     private var counter=5
     private lateinit var buttons_list:List<Button>
+    private val LOG = Logger.getLogger(this.javaClass.name)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +42,7 @@ class TapTheNumChallenge : AppCompatActivity() {
             override fun onFinish() {
                 var counter_for_right_answers = counter-5
                 println("Time is up with $counter_for_right_answers points")
-                val intent = Intent(this@TapTheNumChallenge, MainActivity::class.java)
+                val intent = Intent(this@TapTheNumChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -51,6 +55,10 @@ class TapTheNumChallenge : AppCompatActivity() {
         for (b in buttons_list) {
             change_button_to_random_location(displayMetrics, b)
         }
+    }
+
+    override fun onBackPressed() {
+        LOG.info("Can not go back in a middle of a challenge")
     }
 
     // this method change

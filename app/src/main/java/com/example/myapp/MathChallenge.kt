@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
+import java.util.logging.Logger
 
 class MathChallenge : AppCompatActivity() {
     private var counter_for_right_answers=0
+    private val LOG = Logger.getLogger(this.javaClass.name)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +31,7 @@ class MathChallenge : AppCompatActivity() {
 
             override fun onFinish() {
                 println("Time is up with $counter_for_right_answers points")
-                val intent = Intent(this@MathChallenge, MainActivity::class.java)
+                val intent = Intent(this@MathChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -38,6 +40,9 @@ class MathChallenge : AppCompatActivity() {
         game() // starting the game
     }
 
+    override fun onBackPressed() {
+        LOG.info("Can not go back in a middle of a challenge")
+    }
 
     private fun game() {
         var operation_list = listOf('-','+')

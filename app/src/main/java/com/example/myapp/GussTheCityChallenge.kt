@@ -11,9 +11,12 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.myapp.MainActivity
 import com.example.myapp.R
+import java.util.logging.Logger
+
 
 class GussTheCityChallenge : AppCompatActivity() {
     private var counter_for_right_answers=0
+    private val LOG = Logger.getLogger(this.javaClass.name)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,13 +40,17 @@ class GussTheCityChallenge : AppCompatActivity() {
 
             override fun onFinish() {
                 println("Time is up with $counter_for_right_answers points")
-                val intent = Intent(this@GussTheCityChallenge, MainActivity::class.java)
+                val intent = Intent(this@GussTheCityChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
         timer.start() // starting the timer
 
         game() // starting the game
+    }
+
+    override fun onBackPressed() {
+        LOG.info("Can not go back in a middle of a challenge")
     }
 
 

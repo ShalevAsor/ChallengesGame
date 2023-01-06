@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
+import java.util.logging.Logger
 
 class ButtonChallenge : AppCompatActivity() {
     private var counter = 0
     private lateinit var scoreView: TextView
+    private val LOG = Logger.getLogger(this.javaClass.name)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +32,16 @@ class ButtonChallenge : AppCompatActivity() {
 
             override fun onFinish() {
                 println("Time is up with $counter points")
-                val intent = Intent(this@ButtonChallenge, MainActivity::class.java)
+                val intent = Intent(this@ButtonChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
         timer.start() // starting the timer
 
+    }
+
+    override fun onBackPressed() {
+        LOG.info("Can not go back in a middle of a challenge")
     }
 
     fun clickCounter(view: View) {
