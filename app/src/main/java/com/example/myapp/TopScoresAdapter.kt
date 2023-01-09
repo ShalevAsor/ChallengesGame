@@ -15,6 +15,9 @@ import java.util.*
 /**
  * This class adapting between the topScores fragment and the view
  */
+private val FIRSTSCORE:Int = 0
+private val SECONDSCORE:Int = 1
+private val THIRDSCORE:Int = 2
 class TopScoresAdapter(
     private val mContext: Context,
     mTopScores: MutableList<TopScores>

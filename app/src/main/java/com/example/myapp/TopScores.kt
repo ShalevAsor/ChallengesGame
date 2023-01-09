@@ -5,18 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.util.*
-import kotlin.collections.ArrayList
+
 
 /**
  * This class represents score in the Top Scores list
@@ -53,7 +51,23 @@ class TopScores : Fragment() {
         recyclerView.adapter = topScoresAdapter
 
         /* read the scores from the database */
+        //(activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         readTopScores(topScores, topScoresAdapter)
+        val firstScoreUserName = view.findViewById<TextView>(R.id.my_top_score_user_name_first_score)
+        val secondScoreUserName = view.findViewById<TextView>(R.id.my_top_score_user_name_second_score)
+        val thirdScoreUserName = view.findViewById<TextView>(R.id.my_top_score_user_name_third_score)
+        val firstScore = view.findViewById<TextView>(R.id.my_top_scores_text_first_score)
+        val secondScore = view.findViewById<TextView>(R.id.my_top_scores_text_second_score)
+        val thirdScore = view.findViewById<TextView>(R.id.my_top_scores_text_third_score)
+        //add image profile
+        //set top 3 players
+        firstScore.text = "40"
+        secondScore.text = "30"
+        thirdScore.text ="25"
+        firstScoreUserName.text = "Tom"
+        secondScoreUserName.text = "Ron"
+        thirdScoreUserName.text = "Avi"
+
         return view
     }
 
