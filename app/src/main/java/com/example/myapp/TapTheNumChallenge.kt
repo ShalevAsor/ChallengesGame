@@ -17,6 +17,7 @@ class TapTheNumChallenge : AppCompatActivity() {
     private var counter=5
     private lateinit var buttons_list:List<Button>
     private val LOG = Logger.getLogger(this.javaClass.name)
+    private lateinit var scoreView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +25,8 @@ class TapTheNumChallenge : AppCompatActivity() {
         setContentView(R.layout.activity_tap_the_num_challenge)
 
         var time_in_sec=20;
+        scoreView = findViewById(R.id.theScore)
+
         val timer = object: CountDownTimer(20000, 1000) {
             @SuppressLint("WrongViewCast")
             override fun onTick(millisUntilFinished: Long) {
@@ -31,10 +34,6 @@ class TapTheNumChallenge : AppCompatActivity() {
 
                 val timeView: TextView = findViewById(R.id.theTime) as TextView
                 timeView.text="Time left: $time_in_sec"
-
-                val scoreView: TextView = findViewById(R.id.theScore) as TextView
-                var counter_for_right_answers = counter-5
-                scoreView.text="Score: $counter_for_right_answers"
 
                 time_in_sec--
             }
@@ -83,6 +82,10 @@ class TapTheNumChallenge : AppCompatActivity() {
         button.setOnClickListener {
             if (isMinButton(button)) {
                 counter++
+
+                val score = counter-5
+                scoreView.text="Score: $score"
+
                 button.text = counter.toString()
                 change_button_to_random_location(displayMetrics, button)
             }
@@ -110,11 +113,7 @@ class TapTheNumChallenge : AppCompatActivity() {
 
     private fun isMinButton(button: Button): Boolean {
         var min_num:Int = button.text.toString().toInt()
-        for (b in buttons_list){
-            var num=b.text.toString().toInt()
-            if (num<min_num) return false
-        }
-        return true
+        return min_num==(counter-4)
     }
 
 

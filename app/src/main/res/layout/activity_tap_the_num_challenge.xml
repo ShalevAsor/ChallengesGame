@@ -64,7 +64,7 @@
             android:layout_y="700dp"
             android:scaleX="2"
             android:scaleY="2"
-            android:text="score: 0" />
+            android:text="Score: 0" />
 
         <TextView
             android:id="@+id/theTime"

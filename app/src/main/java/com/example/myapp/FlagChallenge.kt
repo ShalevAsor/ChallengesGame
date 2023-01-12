@@ -9,14 +9,29 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import java.util.logging.Logger
 
 class FlagChallenge : AppCompatActivity() {
     private var counter_for_right_answers=0
+    private val LOG = Logger.getLogger(this.javaClass.name)
+    private lateinit var scoreView: TextView
+    private lateinit var button_1: Button
+    private lateinit var button_2: Button
+    private lateinit var button_3: Button
+    private lateinit var button_4: Button
+    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
         setContentView(R.layout.activity_flag_challenge)
+
+        scoreView = findViewById(R.id.scoreView)
+        button_1 = findViewById(R.id.button1)
+        button_2 = findViewById(R.id.button2)
+        button_3 = findViewById(R.id.button3)
+        button_4 = findViewById(R.id.button4)
+        imageView = findViewById<ImageView>(R.id.imageView)
 
         var time_in_sec=15;
         val timer = object: CountDownTimer(15000, 1000) {
@@ -27,15 +42,12 @@ class FlagChallenge : AppCompatActivity() {
                 val timeView: TextView = findViewById(R.id.timeView) as TextView
                 timeView.text="Time left: $time_in_sec"
 
-                val scoreView: TextView = findViewById(R.id.scoreView) as TextView
-                scoreView.text="Score: $counter_for_right_answers"
-
                 time_in_sec--
             }
 
             override fun onFinish() {
                 println("Time is up with $counter_for_right_answers points")
-                val intent = Intent(this@FlagChallenge, MainActivity::class.java)
+                val intent = Intent(this@FlagChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -44,16 +56,14 @@ class FlagChallenge : AppCompatActivity() {
         game() // starting the game
     }
 
+    override fun onBackPressed() {
+        LOG.info("Can not go back in a middle of a challenge")
+    }
 
     private fun game() {
-        val button_1: Button = findViewById(R.id.button1)
-        val button_2: Button = findViewById(R.id.button2)
-        val button_3: Button = findViewById(R.id.button3)
-        val button_4: Button = findViewById(R.id.button4)
-        val imageView = findViewById<ImageView>(R.id.imageView)
-
         val flags_list = ArrayList<Int>()
         val flag_arr = resources.obtainTypedArray(R.array.flags)
+
         (0 until flag_arr.length()).forEach {
             val flag = flag_arr.getResourceId(it, -1)
             flags_list.add(flag)
@@ -121,24 +131,28 @@ class FlagChallenge : AppCompatActivity() {
         button_1.setOnClickListener {
             if (right_button==1) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
 
         button_2.setOnClickListener {
             if (right_button==2) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
 
         button_3.setOnClickListener {
             if (right_button==3) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
 
         button_4.setOnClickListener {
             if (right_button==4) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
     }

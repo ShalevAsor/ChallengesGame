@@ -17,13 +17,26 @@ import java.util.logging.Logger
 class GussTheCityChallenge : AppCompatActivity() {
     private var counter_for_right_answers=0
     private val LOG = Logger.getLogger(this.javaClass.name)
+    private lateinit var scoreView: TextView
+    private lateinit var button_1: Button
+    private lateinit var button_2: Button
+    private lateinit var button_3: Button
+    private lateinit var button_4: Button
+    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
         setContentView(R.layout.activity_guss_the_city_challenge)
 
-        var time_in_sec=15;
+        scoreView = findViewById(R.id.thescoreView)
+        button_1 = findViewById(R.id.bu1)
+        button_2 = findViewById(R.id.bu2)
+        button_3 = findViewById(R.id.bu3)
+        button_4 = findViewById(R.id.bu4)
+        imageView = findViewById<ImageView>(R.id.theimageView)
+        var time_in_sec=15
+
         val timer = object: CountDownTimer(15000, 1000) {
             @SuppressLint("WrongViewCast")
             override fun onTick(millisUntilFinished: Long) {
@@ -31,9 +44,6 @@ class GussTheCityChallenge : AppCompatActivity() {
 
                 val timeView: TextView = findViewById(R.id.thetimeView) as TextView
                 timeView.text="Time left: $time_in_sec"
-
-                val scoreView: TextView = findViewById(R.id.thescoreView) as TextView
-                scoreView.text="Score: $counter_for_right_answers"
 
                 time_in_sec--
             }
@@ -55,12 +65,6 @@ class GussTheCityChallenge : AppCompatActivity() {
 
 
     private fun game() {
-        val button_1: Button = findViewById(R.id.bu1)
-        val button_2: Button = findViewById(R.id.bu2)
-        val button_3: Button = findViewById(R.id.bu3)
-        val button_4: Button = findViewById(R.id.bu4)
-        val imageView = findViewById<ImageView>(R.id.theimageView)
-
         var random_city_num:Int
         var random_of_fake_city_num1:Int
         var random_of_fake_city_num2:Int
@@ -137,24 +141,28 @@ class GussTheCityChallenge : AppCompatActivity() {
         button_1.setOnClickListener {
             if (right_button==1) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
 
         button_2.setOnClickListener {
             if (right_button==2) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
 
         button_3.setOnClickListener {
             if (right_button==3) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
 
         button_4.setOnClickListener {
             if (right_button==4) counter_for_right_answers++
             println(counter_for_right_answers)
+            scoreView.text="Score: $counter_for_right_answers"
             game()
         }
     }
