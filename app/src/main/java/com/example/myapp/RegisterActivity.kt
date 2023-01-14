@@ -46,7 +46,7 @@ class RegisterActivity : AppCompatActivity() {
             val userId = dbRef.push().key!! //the unique key
 
             //variable thats holds all the register values
-            val full_user= Users(fName,lName,email,pass,0)
+            val full_user= Users(fName,lName,email,"",pass,0)
             val user_billboard= Billboard(fName,0)
 
             if(email.isNotEmpty() && fName.isNotEmpty() && lName.isNotEmpty() && pass.isNotEmpty()){

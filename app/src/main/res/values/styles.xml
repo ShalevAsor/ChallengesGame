@@ -92,7 +92,14 @@
     </style>
 
 
+    <!-- android_large___1 styles -->
 
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+<!--        <item name="colorPrimary">@color/white</item>-->
+<!--        <item name="colorPrimaryDark">@color/Gray</item>-->
+<!--        <item name="colorAccent">@color/Black</item>-->
+<!--    </style>-->
 
 
 </resources>
+

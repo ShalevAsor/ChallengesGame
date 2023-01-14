@@ -109,7 +109,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_profile -> {
-                    Toast.makeText(mContext, "handle user profile here", Toast.LENGTH_SHORT).show()
+                    intent = Intent(this, UserProfileActivity::class.java)
+                    startActivity(intent)
+
+//                    setContentView(R.layout.fragment_user_profile)
+//                    val fragment:Fragment = UserProfile()
+//                    val fragmentManager = supportFragmentManager
+//                    val fragmentTransaction = fragmentManager.beginTransaction()
+//                    fragmentTransaction.replace(R.id.fragment_user_profile,fragment)
+//                    // fragmentTransaction.addToBackStack(null)
+//                    fragmentTransaction.commit()
                 }
                 R.id.nav_top_scores -> {
                     setContentView(R.layout.fragment_top_scores)

@@ -5,6 +5,7 @@ data class Users(
     var firstName: String? = null,
     var lastName: String? = null,
     var userEmail: String? = null,
+    var imageUrl: String? = null,
     var pass: String? = null,
     var personal_score: Int?=0
 )

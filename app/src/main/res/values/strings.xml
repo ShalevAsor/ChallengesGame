@@ -71,7 +71,13 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 
-    <!-- android_large___1 strings -->
+    <!-- Strings user profile -->
+    <string name="user_profile_name">User Name</string>
+    <string name="user_profile_email">Email</string>
+    <string name="user_profile_first_name">First Name</string>
+    <string name="user_profile_last_name">Last Name</string>
+    <string name="user_profile_history">History</string>
+    <string name="user_profile_language">Language</string>
 
 
 </resources>
