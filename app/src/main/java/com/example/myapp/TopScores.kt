@@ -21,6 +21,9 @@ import com.google.firebase.database.ValueEventListener
  */
 class TopScores : Fragment() {
 
+    private val FIRSTSCORE:Int = 0
+    private val SECONDSCORE:Int = 1
+    private val THIRDSCORE:Int = 2
     var firstName: String? = null
     var totalScores: Int = 0
 
@@ -61,12 +64,12 @@ class TopScores : Fragment() {
         val thirdScore = view.findViewById<TextView>(R.id.my_top_scores_text_third_score)
         //add image profile
         //set top 3 players
-        firstScore.text = "40"
-        secondScore.text = "30"
-        thirdScore.text ="25"
-        firstScoreUserName.text = "Tom"
-        secondScoreUserName.text = "Ron"
-        thirdScoreUserName.text = "Avi"
+        firstScore.text = "24"
+        secondScore.text = "23"
+        thirdScore.text ="22"
+        firstScoreUserName.text = "david"
+        secondScoreUserName.text = "avi"
+        thirdScoreUserName.text = "ron"
 
         return view
     }
@@ -94,9 +97,12 @@ class TopScores : Fragment() {
                     }
                     topScores.reverse()
                     topScoresAdapter.notifyDataSetChanged()
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
+
+
 }

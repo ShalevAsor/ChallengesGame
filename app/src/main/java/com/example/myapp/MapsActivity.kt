@@ -28,7 +28,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -132,9 +131,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 R.id.nav_logout -> {
                     firebaseAuth.signOut()
                     signOutGoogle()
-                    val intent = Intent(this, LoginActivity::class.java)
+                    val intent = Intent(this,LoginActivity::class.java)
                     startActivity(intent)
                     finishAffinity()
+
                 }
             }
             true
@@ -203,12 +203,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             )
             return
         }
-
         val getLocation =
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     currentLocation = location
-
                     mapFragment.getMapAsync(this)
                 }
             }
@@ -502,6 +500,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                             0
                         )
                         updateMarkersOnTheList()
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(markerLocation))
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerLocation, 15.0f))
+
                         addMarkerPupUp.dismiss()
                     }
                 }

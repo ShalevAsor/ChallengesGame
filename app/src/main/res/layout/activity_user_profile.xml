@@ -52,28 +52,28 @@
                 android:background="@drawable/user_profile_line_1_shape"
                 android:layout_marginStart="37dp"
                 android:layout_marginTop="312dp"
-                android:layout_width="293.01dp"
+                android:layout_width="290dp"
                 android:layout_height="2dp" />
 
             <View   android:id="@+id/line_2"
                 android:background="@drawable/user_profile_line_2_shape"
                 android:layout_marginStart="33dp"
                 android:layout_marginTop="400dp"
-                android:layout_width="293.01dp"
+                android:layout_width="290dp"
                 android:layout_height="2dp" />
 
             <View   android:id="@+id/line_3"
                 android:background="@drawable/user_profile_line_3_shape"
                 android:layout_marginStart="37dp"
                 android:layout_marginTop="482dp"
-                android:layout_width="293.01dp"
+                android:layout_width="290dp"
                 android:layout_height="2dp" />
 
             <View   android:id="@+id/line_4"
                 android:background="@drawable/user_profile_line_4_shape"
                 android:layout_marginStart="37dp"
                 android:layout_marginTop="565dp"
-                android:layout_width="293.01dp"
+                android:layout_width="290dp"
                 android:layout_height="2dp" />
 
             <TextView
@@ -88,10 +88,21 @@
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 
+
+            <EditText
+                android:id="@+id/user_profile_email_edit"
+                android:layout_width="281dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_light"
+                android:textColor="@color/white"
+                android:layout_marginTop="350dp"
+                android:layout_marginStart="30dp"
+                android:textSize="20sp" />
+
             <TextView
                 android:id="@+id/user_profile_email"
-                android:layout_width="320dp"
-                android:layout_height="wrap_content"
+                android:layout_width="291dp"
+                android:layout_height="21dp"
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginStart="35dp"
                 android:layout_marginTop="360dp"
@@ -99,6 +110,8 @@
                 android:text="@string/user_profile_email"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
+
+
 
             <TextView
                 android:id="@+id/user_profile_first_name_title"
@@ -111,11 +124,20 @@
                 android:text="@string/user_profile_first_name"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
+            <EditText
+                android:id="@+id/user_profile_first_name_edit"
+                android:layout_width="281dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_light"
+                android:textColor="@color/white"
+                android:layout_marginTop="432dp"
+                android:layout_marginStart="35dp"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/user_profile_first_name"
-                android:layout_width="297dp"
-                android:layout_height="wrap_content"
+                android:layout_width="290dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginStart="35dp"
                 android:layout_marginTop="445dp"
@@ -136,11 +158,20 @@
                 android:text="@string/user_profile_last_name"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
+            <EditText
+                android:id="@+id/user_profile_last_name_edit"
+                android:layout_width="281dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_light"
+                android:textColor="@color/white"
+                android:layout_marginTop="515dp"
+                android:layout_marginStart="35dp"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/user_profile_last_name"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
+                android:layout_width="290dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center_horizontal|center"
                 android:layout_marginStart="35dp"
                 android:layout_marginTop="530dp"
@@ -149,46 +180,21 @@
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
-            <ImageView android:id="@+id/user_profile_history_btn"
-                android:src="@drawable/user_profile_btn_shape"
+
+
+            <Button
+                android:id="@+id/user_profile_save_btn"
+                android:background="@drawable/user_profile_btn_shape"
                 android:layout_marginStart="116dp"
                 android:layout_marginTop="604dp"
+                android:text="@string/user_profile_save"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#1AB9D9"
+                android:textSize="20sp"
+                android:textAlignment="center"
                 android:layout_width="129dp"
                 android:layout_height="37dp" />
 
-            <TextView android:id="@+id/user_profile_history"
-                android:layout_gravity="center_horizontal|center"
-                android:gravity="center"
-                android:fontFamily="@font/poppins_light"
-                android:textSize="20sp"
-                android:textColor="#1AB9D9"
-                android:layout_marginStart="129dp"
-                android:layout_marginTop="611dp"
-                android:layout_width="111dp"
-                android:layout_height="39dp"
-                android:text="@string/user_profile_history"
-                />
-
-            <ImageView android:id="@+id/user_profile_language_btn"
-                android:src="@drawable/user_profile_language_btn_shape"
-                android:contentDescription="rectangle_2"
-                android:layout_marginStart="116dp"
-                android:layout_marginTop="666dp"
-                android:layout_width="129dp"
-                android:layout_height="37dp" />
-
-            <TextView android:id="@+id/user_profile_language"
-                android:layout_gravity="center_horizontal|center"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:fontFamily="@font/poppins_light"
-                android:textColor="#1AB9D9"
-                android:layout_marginStart="129dp"
-                android:layout_marginTop="673dp"
-                android:layout_width="121dp"
-                android:layout_height="39dp"
-                android:text="@string/user_profile_language"
-                />
 
         </RelativeLayout>
     </LinearLayout>

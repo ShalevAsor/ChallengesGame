@@ -77,6 +77,7 @@
     <string name="user_profile_first_name">First Name</string>
     <string name="user_profile_last_name">Last Name</string>
     <string name="user_profile_history">History</string>
+    <string name="user_profile_save">Save</string>
     <string name="user_profile_language">Language</string>
 
 

@@ -1,8 +1,12 @@
 package com.example.myapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.myapp.Model.Users
@@ -33,6 +37,16 @@ class UserProfileActivity : AppCompatActivity() {
         var userLastName:TextView = findViewById(R.id.user_profile_last_name)
         var userEmail:TextView = findViewById(R.id.user_profile_email)
         var userProfileImage: CircleImageView = findViewById(R.id.user_profile_image)
+        var editEmail:EditText = findViewById(R.id.user_profile_email_edit)
+        var editFirstName:EditText = findViewById(R.id.user_profile_first_name_edit)
+        var editLastName:EditText = findViewById(R.id.user_profile_last_name_edit)
+        var editBtn:ImageView = findViewById(R.id.ic_edit_profile_1)
+        var saveBtn:Button = findViewById(R.id.user_profile_save_btn)
+        editEmail.visibility = View.GONE
+        editFirstName.visibility = View.GONE
+        editLastName.visibility = View.GONE
+        saveBtn.visibility = View.GONE
+
         databaseReference = FirebaseDatabase.getInstance().getReference("Users")
         Log.i("uid", "the value is :"+uid)
         if(uid.isNotEmpty()){
@@ -54,6 +68,24 @@ class UserProfileActivity : AppCompatActivity() {
 
             })
         }
+        editBtn.setOnClickListener{
+            saveBtn.visibility = View.VISIBLE
+            editEmail.visibility = View.VISIBLE
+            editFirstName.visibility = View.VISIBLE
+            editLastName.visibility = View.VISIBLE
+            userFirstName.visibility = View.GONE
+            userLastName.visibility = View.GONE
+            userEmail.visibility = View.GONE
+
+            saveBtn.setOnClickListener {
+                val intent = Intent(this, UserProfileActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+
+        }
+
     }
 
 //    private fun getUserData(){
