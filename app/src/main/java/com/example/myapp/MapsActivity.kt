@@ -61,6 +61,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private lateinit var markers: List<MarkerModel>
     private lateinit var challengeSelected: String
     private lateinit var fetchData: FetchData
+    private lateinit var currentMarker:MarkerModel
 
     //indicators
     private var clicked = false//allows only one click on the map when adding marker
@@ -171,7 +172,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     }
     //clicked on android phone back btn
     override fun onBackPressed() {
-
         intent = Intent(this, MapsActivity::class.java)
         startActivity(intent)
         finish()
@@ -399,12 +399,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 "Clicker" -> {
                     intent = Intent(this, ButtonChallenge::class.java)
                     startActivity(intent)
-                    finish()
                 }
                 "Guess The City" -> {
                     intent = Intent(this, GussTheCityChallenge::class.java)
                     startActivity(intent)
-                    finish()
                 }
                 "Logo Challenge" -> {
                     intent = Intent(this, LogoChallenge::class.java)
@@ -419,9 +417,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 }
-
-
             }
+            //check if current marker score is lower then the score of the game
+
+
+
+
         }
     }
 
@@ -478,7 +479,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     view: View, position: Int, id: Long
                 ) {
                     challengeSelected = challenges[position]
-
                     //wait for the user to click "select"
                     btnSetChallenge.setOnClickListener {
                         val currMarkerTag = UUID.randomUUID().toString()

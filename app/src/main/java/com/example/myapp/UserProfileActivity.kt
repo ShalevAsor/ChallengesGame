@@ -32,20 +32,22 @@ class UserProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_profile)
         auth = FirebaseAuth.getInstance()
         uid = auth.currentUser?.uid.toString()
-        var userFullName:TextView = findViewById(R.id.user_profile_full_name)
-        var userFirstName:TextView = findViewById(R.id.user_profile_first_name)
-        var userLastName:TextView = findViewById(R.id.user_profile_last_name)
-        var userEmail:TextView = findViewById(R.id.user_profile_email)
-        var userProfileImage: CircleImageView = findViewById(R.id.user_profile_image)
-        var editEmail:EditText = findViewById(R.id.user_profile_email_edit)
-        var editFirstName:EditText = findViewById(R.id.user_profile_first_name_edit)
-        var editLastName:EditText = findViewById(R.id.user_profile_last_name_edit)
-        var editBtn:ImageView = findViewById(R.id.ic_edit_profile_1)
-        var saveBtn:Button = findViewById(R.id.user_profile_save_btn)
+        val userFullName:TextView = findViewById(R.id.user_profile_full_name)
+        val userFirstName:TextView = findViewById(R.id.user_profile_first_name)
+        val userLastName:TextView = findViewById(R.id.user_profile_last_name)
+        val userEmail:TextView = findViewById(R.id.user_profile_email)
+        val userProfileImage: CircleImageView = findViewById(R.id.user_profile_image)
+        val editEmail:EditText = findViewById(R.id.user_profile_email_edit)
+        val editFirstName:EditText = findViewById(R.id.user_profile_first_name_edit)
+        val editLastName:EditText = findViewById(R.id.user_profile_last_name_edit)
+        val editBtn:ImageView = findViewById(R.id.ic_edit_profile_1)
+        val saveBtn:Button = findViewById(R.id.user_profile_save_btn)
+        val uploadImageBtn = findViewById<ImageView>(R.id.ic_edit_profile_upload_picture)
         editEmail.visibility = View.GONE
         editFirstName.visibility = View.GONE
         editLastName.visibility = View.GONE
         saveBtn.visibility = View.GONE
+        uploadImageBtn.visibility = View.GONE
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Users")
         Log.i("uid", "the value is :"+uid)
@@ -69,18 +71,30 @@ class UserProfileActivity : AppCompatActivity() {
             })
         }
         editBtn.setOnClickListener{
+            //set edit variables visibility
             saveBtn.visibility = View.VISIBLE
             editEmail.visibility = View.VISIBLE
             editFirstName.visibility = View.VISIBLE
             editLastName.visibility = View.VISIBLE
+            uploadImageBtn.visibility = View.VISIBLE
+            //make the user data text view invisible
             userFirstName.visibility = View.GONE
             userLastName.visibility = View.GONE
             userEmail.visibility = View.GONE
+            //set the edit text data to the last user data
+            editEmail.setText(userEmail.text)
+            editFirstName.setText(userFirstName.text)
+            editLastName.setText(userLastName.text)
+
+
 
             saveBtn.setOnClickListener {
-                val intent = Intent(this, UserProfileActivity::class.java)
-                startActivity(intent)
-                finish()
+                //update user profile in database here
+                reloadView()
+            }
+            uploadImageBtn.setOnClickListener{
+                //update image url here
+                reloadView()
             }
 
 
@@ -88,23 +102,10 @@ class UserProfileActivity : AppCompatActivity() {
 
     }
 
-//    private fun getUserData(){
-//        databaseReference.child(uid).addValueEventListener(object:ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                user = snapshot.getValue(Users::class.java)!!
-//                binding.userProfileFullName.text = user.firstName + " "+ user.lastName
-//                binding.userProfileEmail.text = user.userEmail
-//                binding.userProfileFirstName.text = user.firstName
-//                binding.userProfileLastName.text = user.lastName
-//                Picasso.get()
-//                    .load(user.imageUrl)
-//                    .into(binding.userProfileImage)
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.e("firebase", "Error getting data")
-//            }
-//
-//        })
-//    }
+    private fun reloadView() {
+        val intent = Intent(this, UserProfileActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
 }

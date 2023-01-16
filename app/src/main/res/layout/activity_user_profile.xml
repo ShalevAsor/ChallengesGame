@@ -10,11 +10,17 @@
         android:layout_width="match_parent" android:layout_height="match_parent"
         android:id="@+id/fragment_user_profile">
 
+
         <RelativeLayout android:id="@+id/page_android_large___1_ek1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFADE8F4"
             >
+
+
+
+
+
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_image"
@@ -23,6 +29,13 @@
                 android:layout_marginTop="82dp"
                 android:layout_width="156dp"
                 android:layout_height="156dp" />
+
+            <ImageView android:id="@+id/ic_edit_profile_upload_picture"
+                android:src="@drawable/ic_upload_image"
+                android:layout_marginTop="70dp"
+                android:layout_marginStart="210dp"
+                android:layout_width="43dp"
+                android:layout_height="42dp" />
 
             <TextView android:id="@+id/user_profile_full_name"
                 android:fontFamily="@font/poppins_bold"
