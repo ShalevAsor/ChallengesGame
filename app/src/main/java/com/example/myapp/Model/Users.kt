@@ -6,6 +6,5 @@ data class Users(
     var lastName: String? = null,
     var userEmail: String? = null,
     var imageUrl: String? = null,
-    var pass: String? = null,
-    var personal_score: Int?=0
+    var pass: String? = null
 )

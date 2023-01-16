@@ -2,13 +2,17 @@ package com.example.myapp
 
 import android.Manifest
 import android.R.attr
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapp.Model.Billboard
+import com.example.myapp.Model.Users
 import com.example.myapp.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -17,6 +21,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 class LoginActivity : AppCompatActivity() {
@@ -100,12 +108,66 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == 1 ) {
+        if (requestCode == 1) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
 
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
+                        try {
+                //adding a user to our realtime data base when logging in via google signin
+                val account = task.getResult(ApiException::class.java)
+                val idToken = account?.idToken
+                val email = account?.email as String
+                val password = "123456"
+                 firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener{
+                 if(it.isSuccessful) {
+                     val userId = FirebaseAuth.getInstance().currentUser?.uid
+                     val name = account?.displayName
+                     val user = Users(name, " ", email," ",123456.toString())
+                     val billboardUser = Billboard(name,0)
+                     val userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId!!)
+                     userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                             if (dataSnapshot.exists()) {
+                                 Log.d(TAG, "User already exists in the database.")
+                             } else {
+                                 userRef.setValue(user).addOnSuccessListener {
+                                     Log.d(TAG, "User created successfully!")
+                                 }.addOnFailureListener {
+                                     Log.w(TAG, "Error creating user", it)
+                                 }
+                             }
+                         }
+                         override fun onCancelled(databaseError: DatabaseError) {
+                             Log.w(TAG, "Error checking for existing user", databaseError.toException())
+                         }
+                     })
+                     val userRef2 = FirebaseDatabase.getInstance().getReference("Billboard").child(userId!!)
+                     userRef2.addListenerForSingleValueEvent(object : ValueEventListener {
+                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                             if (dataSnapshot.exists()) {
+                                 Log.d(TAG, "User already exists in the database.")
+                             } else {
+                                 userRef2.setValue(billboardUser).addOnSuccessListener {
+                                     Log.d(TAG, "billboardUser created successfully!")
+                                 }.addOnFailureListener {
+                                     Log.w(TAG, "Error creating billboardUser", it)
+                                 }
+                             }
+                         }
+                         override fun onCancelled(databaseError: DatabaseError) {
+                             Log.w(TAG, "Error checking for existing user", databaseError.toException())
+                         }
+                     })
+
+                 }}
+
+            } catch (e: ApiException) {
+                // Handle error
+            }
+
+
         }
     }
 

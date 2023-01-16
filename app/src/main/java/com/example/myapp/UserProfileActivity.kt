@@ -59,9 +59,11 @@ class UserProfileActivity : AppCompatActivity() {
                     userFirstName.text = user.firstName
                     userLastName.text = user.lastName
                     userEmail.text = user.userEmail
-                    Picasso.get()
-                        .load(user.imageUrl)
-                        .into(userProfileImage)
+                    if(user.imageUrl != " ") {
+                        Picasso.get()
+                            .load(user.imageUrl)
+                            .into(userProfileImage)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {

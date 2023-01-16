@@ -42,28 +42,28 @@ class FetchData {
     }
 
 
-    // Get the user score by "Email"
-    private fun getUserScore(name : String?): Int  {
-        var temp1=0
-        dbRef = FirebaseDatabase.getInstance().getReference("Users")
-        dbRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    for (empSnap in snapshot.children) {
-                        val userData = empSnap.getValue(Users::class.java)
-                        if(userData!=null && userData.userEmail=="$name")
-                        {
-                            temp1= userData.personal_score!!
-                        }
-                    }
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
-        return temp1
-    }
+//    // Get the user score by "Email"
+//    private fun getUserScore(name : String?): Int  {
+//        var temp1=0
+//        dbRef = FirebaseDatabase.getInstance().getReference("Users")
+//        dbRef.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                if (snapshot.exists()) {
+//                    for (empSnap in snapshot.children) {
+//                        val userData = empSnap.getValue(Users::class.java)
+//                        if(userData!=null && userData.userEmail=="$name")
+//                        {
+//                            temp1= userData.personal_score!!
+//                        }
+//                    }
+//                }
+//            }
+//            override fun onCancelled(error: DatabaseError) {
+//                TODO("Not yet implemented")
+//            }
+//        })
+//        return temp1
+//    }
      fun getDescription(name : String?): String  {
 
 

@@ -387,9 +387,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private fun startChallenge(marker: MarkerModel?) {
         if (marker != null) {
             val intent: Intent
+
+
             when (marker.chall_name) {
                 "Guess the flag" -> {
                     intent = Intent(this, FlagChallenge::class.java)
+                    intent.putExtra("markerID",marker.marker_id)
+                    intent.putExtra("markerTopScore",marker.top_score)
                     startActivity(intent)
                 }
                 "Calculator" -> {
@@ -398,6 +402,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 }
                 "Clicker" -> {
                     intent = Intent(this, ButtonChallenge::class.java)
+                    intent.putExtra("markerID",marker.marker_id)
                     startActivity(intent)
                 }
                 "Guess The City" -> {

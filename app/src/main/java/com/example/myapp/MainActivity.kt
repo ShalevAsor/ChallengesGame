@@ -76,23 +76,23 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun getUsersinfo() {
-
-
-        dbRef.child(user_id).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                user= snapshot.getValue(Users::class.java)!!
-                binding.mainUserInfo.setText(user.firstName+" " +user.lastName+" " +user.personal_score.toString() )
-                // Log.e("zzzzzzzz","${user.personal_score}")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
-        })
-
-
-    }
+//    fun getUsersinfo() {
+//
+//
+//        dbRef.child(user_id).addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                user= snapshot.getValue(Users::class.java)!!
+//                binding.mainUserInfo.setText(user.firstName+" " +user.lastName+" " +user.personal_score.toString() )
+//                // Log.e("zzzzzzzz","${user.personal_score}")
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//
+//            }
+//
+//        })
+//
+//
+//    }
 
 }

@@ -24,7 +24,7 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_image"
-                android:background="@drawable/user_profile_image_shape"
+                android:background="@drawable/ic_android_user_default"
                 android:layout_marginStart="105dp"
                 android:layout_marginTop="82dp"
                 android:layout_width="156dp"
