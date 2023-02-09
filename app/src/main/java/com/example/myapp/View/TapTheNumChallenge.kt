@@ -1,14 +1,16 @@
-package com.example.myapp
+package com.example.myapp.View
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapp.Controller.ChallengeController
+import com.example.myapp.R
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 import java.util.logging.Logger
 
@@ -18,12 +20,12 @@ class TapTheNumChallenge : AppCompatActivity() {
     private lateinit var buttons_list:List<Button>
     private val LOG = Logger.getLogger(this.javaClass.name)
     private lateinit var scoreView: TextView
-
+    private lateinit var challengeController: ChallengeController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
         setContentView(R.layout.activity_tap_the_num_challenge)
-
+        challengeController = ChallengeController(this)
         var time_in_sec=20;
         scoreView = findViewById(R.id.theScore)
 
@@ -40,6 +42,11 @@ class TapTheNumChallenge : AppCompatActivity() {
 
             override fun onFinish() {
                 var counter_for_right_answers = counter-5
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                val markerId = intent.getStringExtra("MARKER_ID")
+                if(markerId != null && userId != null ) {
+                    challengeController.updateAllScores(userId, markerId.toString(), counter_for_right_answers)
+                }
                 println("Time is up with $counter_for_right_answers points")
                 val intent = Intent(this@TapTheNumChallenge, MapsActivity::class.java)
                 startActivity(intent)
@@ -50,7 +57,9 @@ class TapTheNumChallenge : AppCompatActivity() {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 
-        buttons_list = listOf(findViewById<View>(R.id.b1) as Button, findViewById<View>(R.id.b2) as Button, findViewById<View>(R.id.b3) as Button, findViewById<View>(R.id.b4) as Button, findViewById<View>(R.id.b5) as Button)
+        buttons_list = listOf(findViewById<View>(R.id.b1) as Button, findViewById<View>(R.id.b2) as Button, findViewById<View>(
+            R.id.b3
+        ) as Button, findViewById<View>(R.id.b4) as Button, findViewById<View>(R.id.b5) as Button)
         for (b in buttons_list) {
             change_button_to_random_location(displayMetrics, b)
         }
@@ -100,7 +109,9 @@ class TapTheNumChallenge : AppCompatActivity() {
             )
             if (dist<400) return false
         }
-        var text_list:List<TextView> = arrayListOf(findViewById<View>(R.id.theScore) as TextView, findViewById<View>(R.id.theTime) as TextView)
+        var text_list:List<TextView> = arrayListOf(findViewById<View>(R.id.theScore) as TextView, findViewById<View>(
+            R.id.theTime
+        ) as TextView)
         for (t in text_list){
             var dist = Math.sqrt(
                 Math.pow((t.x-x).toDouble(),2.0)

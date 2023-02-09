@@ -2,10 +2,10 @@ package com.example.myapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapp.Model.Users
+import com.example.myapp.Model.UserModel
+import com.example.myapp.View.LoginActivity
+import com.example.myapp.View.MapsActivity
 import com.example.myapp.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dbRef: DatabaseReference
     //
     private lateinit var user_id: String
-    private lateinit var user: Users
+    private lateinit var user: UserModel
     //private var SPLASH_SCREEN_TIME_OUT:Long=2000
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +50,11 @@ class MainActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        dbRef = FirebaseDatabase.getInstance().getReference("Users")
+        dbRef = FirebaseDatabase.getInstance().getReference("UserModel")
         user_id = firebaseAuth.currentUser?.uid.toString()
         //go to map page
         binding.mainMapBtn.setOnClickListener {
-            val intent = Intent(this,MapsActivity::class.java)
+            val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
         }
 
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             //log out
             firebaseAuth.signOut()
             signOutGoogle()
-            val intent = Intent(this,LoginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finishAffinity()
         }
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 //
 //        dbRef.child(user_id).addValueEventListener(object : ValueEventListener {
 //            override fun onDataChange(snapshot: DataSnapshot) {
-//                user= snapshot.getValue(Users::class.java)!!
+//                user= snapshot.getValue(UserModel::class.java)!!
 //                binding.mainUserInfo.setText(user.firstName+" " +user.lastName+" " +user.personal_score.toString() )
 //                // Log.e("zzzzzzzz","${user.personal_score}")
 //            }

@@ -30,6 +30,7 @@
     <!-- Strings Popup challenge -->
     <string name="challenge_name">Challenge Name:</string>
     <string name="top_score">Top score:</string>
+    <string name="user_score">User score:</string>
     <string name="description">Description:</string>
     <string name="start">Start</string>
     <!-- Strings Popup select challenge -->

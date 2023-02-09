@@ -9,7 +9,11 @@
     android:layout_height="match_parent"
     android:id="@+id/fragment_top_scores"
     android:background="#ade8f4"
-    tools:context=".TopScores">
+    tools:context=".View.TopScores">
+
+
+
+
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -33,11 +37,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <ImageView
-            android:id="@+id/my_top_score_user_profile_first_score"
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_person" />
+            android:src="@drawable/ic_person"
+            android:background="@drawable/stroke_image"
+            android:id="@+id/my_top_score_user_profile_first_score"/>
 
 
         <LinearLayout
@@ -84,11 +89,13 @@
         android:padding="10dp"
         app:layout_constraintBaseline_toBottomOf="@id/first_score_layout">
 
-        <ImageView
-            android:id="@+id/my_top_score_user_profile_second_score"
+
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_person" />
+            android:src="@drawable/ic_person"
+            android:background="@drawable/stroke_image"
+            android:id="@+id/my_top_score_user_profile_second_score"/>
 
         <LinearLayout
             android:layout_width="290dp"
@@ -133,11 +140,13 @@
         android:padding="10dp"
         app:layout_constraintBaseline_toBottomOf="@id/second_score_layout">
 
-        <ImageView
-            android:id="@+id/my_top_score_user_profile_third_score"
+
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_person" />
+            android:src="@drawable/ic_person"
+            android:background="@drawable/stroke_image"
+            android:id="@+id/my_top_score_user_profile_third_score"/>
 
         <LinearLayout
             android:layout_width="290dp"
@@ -196,10 +205,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="#48cae4">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_person"
+            android:background="@drawable/stroke_image"
             android:id="@+id/my_top_score_user_profile"/>
 
         <LinearLayout

@@ -1,28 +1,45 @@
-package com.example.myapp
+package com.example.myapp.View
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.myapp.Model.Users
+import com.bumptech.glide.Glide
+import com.example.myapp.Controller.UserProfileController
+import com.example.myapp.R
 import com.example.myapp.databinding.ActivityUserProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-
+/**
+ * UserProfileActivity is an `AppCompatActivity` that allows users to view and edit their personal profile information.
+ * The activity displays information such as the user's full name, first name, last name, email, and profile image.
+ *
+ * @property binding the data binding object for the `activity_user_profile` layout
+ * @property userProfileController the controller responsible for managing user profile data
+ * @property firebaseAuth the instance of FirebaseAuth used to authenticate the user
+ * @property dbRef the database reference to the UserModel data in Firebase
+ * @property uid the user's unique identifier obtained from FirebaseAuth
+ * @property pickImage a constant used to identify the image picker activity when it returns result
+ * @property imageUri the URI of the image selected by the user
+ *
+ */
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityUserProfileBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var databaseReference: DatabaseReference
-    private lateinit var user: Users
+    private lateinit var userProfileController:UserProfileController
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var dbRef: DatabaseReference
     private lateinit var uid:String
+    private val pickImage = 100
+    private var imageUri: Uri? = null
 
 
 
@@ -30,8 +47,9 @@ class UserProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_user_profile)
-        auth = FirebaseAuth.getInstance()
-        uid = auth.currentUser?.uid.toString()
+        firebaseAuth = FirebaseAuth.getInstance()
+        userProfileController = UserProfileController(this)
+        uid = firebaseAuth.currentUser?.uid.toString()
         val userFullName:TextView = findViewById(R.id.user_profile_full_name)
         val userFirstName:TextView = findViewById(R.id.user_profile_first_name)
         val userLastName:TextView = findViewById(R.id.user_profile_last_name)
@@ -49,28 +67,30 @@ class UserProfileActivity : AppCompatActivity() {
         saveBtn.visibility = View.GONE
         uploadImageBtn.visibility = View.GONE
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        dbRef = FirebaseDatabase.getInstance().getReference("UserModel")
         Log.i("uid", "the value is :"+uid)
         if(uid.isNotEmpty()){
-            databaseReference.child(uid).addValueEventListener(object:ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    user = snapshot.getValue(Users::class.java)!!
+            userProfileController.getUser(uid){ user ->
+                if(user != null){
+                    Log.i("TheUserIs", "the value is $user")
                     userFullName.text = user.firstName + " " + user.lastName
                     userFirstName.text = user.firstName
                     userLastName.text = user.lastName
                     userEmail.text = user.userEmail
-                    if(user.imageUrl != " ") {
-                        Picasso.get()
+                    if(user.imageUrl.isNullOrEmpty()) {
+                        Glide.with(applicationContext)
+                            .load(R.drawable.ic_defalut_profile_image)
+                            .into(userProfileImage)
+                    }
+                    else{
+                        Glide.with(applicationContext)
                             .load(user.imageUrl)
                             .into(userProfileImage)
                     }
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("firebase", "Error getting data")
-                }
-
-            })
+            }
         }
         editBtn.setOnClickListener{
             //set edit variables visibility
@@ -96,18 +116,34 @@ class UserProfileActivity : AppCompatActivity() {
             }
             uploadImageBtn.setOnClickListener{
                 //update image url here
-                reloadView()
+                val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                startActivityForResult(gallery,pickImage)
+              //  reloadView()
             }
 
 
         }
 
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == pickImage) {
+            imageUri = data?.data
+            userProfileController.uploadImageToFirebaseStorage(imageUri,uid)
+        }
+    }
+
+
 
     private fun reloadView() {
         val intent = Intent(this, UserProfileActivity::class.java)
         startActivity(intent)
         finish()
     }
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package com.example.myapp
+package com.example.myapp.View
 
 
 import android.content.Intent
@@ -7,16 +7,21 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
+import com.example.myapp.Controller.ChallengeController
+import com.example.myapp.R
+import com.google.firebase.auth.FirebaseAuth
 import java.util.logging.Logger
 
 class MathChallenge : AppCompatActivity() {
     private var counter_for_right_answers=0
     private val LOG = Logger.getLogger(this.javaClass.name)
+    private lateinit var challengeController: ChallengeController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
         setContentView(R.layout.activity_math_challenge)
+        challengeController = ChallengeController(this)
 
         var time_in_sec=15;
         val timer = object: CountDownTimer(15000, 1000) {
@@ -30,6 +35,11 @@ class MathChallenge : AppCompatActivity() {
             }
 
             override fun onFinish() {
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                val markerId = intent.getStringExtra("MARKER_ID")
+                if(markerId != null && userId != null ) {
+                    challengeController.updateAllScores(userId, markerId.toString(), counter_for_right_answers)
+                }
                 println("Time is up with $counter_for_right_answers points")
                 val intent = Intent(this@MathChallenge, MapsActivity::class.java)
                 startActivity(intent)
