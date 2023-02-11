@@ -43,6 +43,7 @@
     <string name="guess_the_city_challenge">Guess The City</string>
     <string name="logo_challenge">Logo Challenge</string>
     <string name="tap_the_number_challenge">Tap The Number</string>
+    <string name="destination_challenge">Destination</string>
     <!-- Strings Challenges description -->
     <string name="calculator_Des">You have 15 seconds to pick the right solution for the equation </string>
     <!--    <string name="guess_the_flag">Guess the flag</string>-->

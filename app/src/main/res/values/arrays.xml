@@ -361,6 +361,7 @@
         <item>@string/guess_the_city_challenge</item>
         <item>@string/logo_challenge</item>
         <item>@string/tap_the_number_challenge</item>
+        <item>@string/destination_challenge</item>
     </string-array>
 
 
@@ -371,7 +372,7 @@
         <item>Logo Challenge:You have 30 seconds Pick the correct logo</item>
         <item>Tap The Number:You have 30 seconds to tap the numbers 1 to 20 in order</item>
         <item>Guess The City:You have 30 seconds to choose the correct city</item>
+        <item>Destination:You have 30 seconds to choose the correct city</item>
     </string-array>
-
 
 </resources>

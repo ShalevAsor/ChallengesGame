@@ -25,6 +25,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.myapp.Controller.MapController
+import com.example.myapp.DestinationsChallenge
 import com.example.myapp.MainActivity
 import com.example.myapp.Model.MarkerModel
 import com.example.myapp.databinding.ActivityMapsBinding
@@ -512,6 +513,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     intent.putExtra("MARKER_ID",marker.marker_id)
                     startActivity(intent)
                 }
+                "Destination" -> {
+                    intent = Intent(this, DestinationsChallenge::class.java)
+                    intent.putExtra("MARKER_ID",marker.marker_id)
+                    startActivity(intent)
+                }
                 else -> {
                     Log.e("challenge", "Filed loading a challenge")
                     intent = Intent(this, MainActivity::class.java)
@@ -660,6 +666,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 return R.drawable.logoicon
             }
             "Tap The Number" -> {
+                return R.drawable.numbericon
+            }
+            "Destination" -> {
                 return R.drawable.numbericon
             }
             else -> {
