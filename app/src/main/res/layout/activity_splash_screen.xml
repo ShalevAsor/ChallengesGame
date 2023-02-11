@@ -10,9 +10,9 @@
 
     <ImageView
         android:id="@+id/SplashScreenImage"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:src="@drawable/map"
+        android:layout_width="417dp"
+        android:layout_height="551dp"
+        android:src="@drawable/splash_screen_3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
