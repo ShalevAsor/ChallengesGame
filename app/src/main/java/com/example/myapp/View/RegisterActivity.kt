@@ -33,7 +33,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
-        dbRef = FirebaseDatabase.getInstance().getReference("UserModel")
+        dbRef = FirebaseDatabase.getInstance().getReference("Users")
         dbRef_2 = FirebaseDatabase.getInstance().getReference("Billboard")
 
         registerController = RegisterController(binding, firebaseAuth, dbRef, dbRef_2)

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapp.Controller.ChallengeController
 import com.example.myapp.databinding.ActivityDestinationsChallengeBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -39,12 +41,14 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
     private var timeLeft = 0L
     private lateinit var timerTextView: TextView
     private lateinit var scoreView: TextView
+    private lateinit var challengeController: ChallengeController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
         binding = ActivityDestinationsChallengeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        challengeController = ChallengeController(this)
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
@@ -127,6 +131,11 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
                             scoreView.text="Score: $score"
 
                             if (markers.size==0){ // finishing the game
+                                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                                val markerId = intent.getStringExtra("MARKER_ID")
+                                if(markerId != null && userId != null ) {
+                                    challengeController.updateAllScores(userId, markerId.toString(), score)
+                                }
                                 val intent = Intent(this@DestinationsChallenge, MainActivity::class.java)
                                 startActivity(intent)
                                 finish()

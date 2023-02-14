@@ -669,7 +669,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 return R.drawable.numbericon
             }
             "Destination" -> {
-                return R.drawable.numbericon
+                return R.drawable.destination_ic
             }
             else -> {
                 Log.e("icons", "Filed loading icon")
@@ -681,6 +681,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     }
     private fun updateMarkersOnTheList(){
         markers = mapController.getMarkers()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
     //    private fun setUpClusterer(marker:MarkerModel) {
 //        // Initialize the manager with the context and the map.

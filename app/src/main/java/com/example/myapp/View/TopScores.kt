@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -140,19 +141,27 @@ class TopScores : Fragment() {
         super.onDestroyView()
     }
 
-    private fun loadImage(imageUrl:String?,image:ImageView ){
-
-        if (imageUrl.isNullOrEmpty()) {
-            Glide.with(this)
-                .load(R.drawable.ic_person)
-                .into(image)
-        }
-        else{
-            Glide.with(this)
-                .load(imageUrl)
-                .into(image)
-        }
-
+//    private fun loadImage(imageUrl:String?,image:ImageView ){
+//
+//        if (imageUrl.isNullOrEmpty()) {
+//            Glide.with(this)
+//                .load(R.drawable.ic_person)
+//                .into(image)
+//        }
+//        else{
+//            Glide.with(this)
+//                .load(imageUrl)
+//                .into(image)
+//        }
+//
+//    }
+    private fun loadImage(imageUrl: String?, imageView: ImageView) {
+        Glide.with(mContext)
+            .load(imageUrl)
+            .centerCrop()
+            .placeholder(R.drawable.ic_person)
+            .error(R.drawable.ic_person)
+            .into(imageView)
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -164,6 +173,17 @@ class TopScores : Fragment() {
                 activity?.onBackPressed()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // handle back arrow press
+                fragmentManager?.popBackStack()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }
