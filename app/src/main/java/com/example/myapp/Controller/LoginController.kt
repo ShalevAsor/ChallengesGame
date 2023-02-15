@@ -7,6 +7,8 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.example.myapp.Model.ScoreModel
+import com.example.myapp.Model.UserModel
 import com.example.myapp.View.LoginActivity
 import com.example.myapp.View.MapsActivity
 import com.example.myapp.View.RegisterActivity
@@ -17,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 /**
  * Class LoginController is a class that handles the functionality of the Login page.
@@ -88,7 +91,9 @@ class LoginController(private val activity: LoginActivity, private val binding: 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            val email = account?.email as String
+            val email = account.email as String
+            val lastName = account.familyName as String
+            val firstName = account.givenName as String
             // TODO: Replace the hardcoded password with a strong password generator
             val password = "123456"
             firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -96,7 +101,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
                     if (task.isSuccessful) {
                         updateUI(activity,"map")
                     } else {
-                        createUserWithEmailAndPassword(email, password)
+                        createUserWithEmailAndPassword(email, password,firstName,lastName)
                     }
                 }
         } catch (e: ApiException) {
@@ -164,15 +169,29 @@ class LoginController(private val activity: LoginActivity, private val binding: 
      * @param email The email of the user.
      * @param password The password of the user.
      */
-    private fun createUserWithEmailAndPassword(email: String, password: String) {
+    private fun createUserWithEmailAndPassword(email: String, password: String,firstName: String,lastName: String) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    createUserInDatabase(email,password,firstName,lastName)
                     updateUI(activity,"map")
                 } else {
                     Toast.makeText(activity, "Error: ${task.exception?.message}", Toast.LENGTH_LONG)
                         .show()
                 }
             }
+    }
+
+    private fun createUserInDatabase(email: String, password: String, firstName: String, lastName: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val fullUser = UserModel(firstName, lastName, email, null, 0, password)
+        val scoreModer = ScoreModel(firstName, 0, null)
+        val dbRef_users = FirebaseDatabase.getInstance().getReference("Users")
+        val dbRef_billboard = FirebaseDatabase.getInstance().getReference("Billboard")
+
+        if (userId != null) {
+            dbRef_users.child(userId).setValue(fullUser).addOnCompleteListener {}
+            dbRef_billboard.child(userId).setValue(scoreModer).addOnCompleteListener {}
+        }
     }
 }

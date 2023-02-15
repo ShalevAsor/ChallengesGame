@@ -116,7 +116,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         //init controller
+//        if (firebaseAuth.currentUser == null) {
+//            val intent = Intent(this, LoginActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        } else {
+//            userID = firebaseAuth.currentUser!!.uid
+//            // Continue with the rest of your code
+//        }
+        if(firebaseAuth.currentUser == null){
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         userID = firebaseAuth.currentUser!!.uid
+
         mapController = MapController(this)
 
         /* init view */

@@ -78,4 +78,7 @@ class RegisterController(private val binding: ActivityRegisterBinding,
             Toast.makeText(binding.root.context, "empty fields", Toast.LENGTH_LONG).show()
         }
     }
+    fun registerUserGoogle(){
+
+    }
 }
