@@ -103,10 +103,12 @@ class TopScoresController(private val view: TopScores) {
                         val scoreModel: ScoreModel? = dss.getValue(ScoreModel::class.java)
                         if (scoreModel != null) {
                             topScores.add(scoreModel)
-                            Log.d("topscoresVaasdgfasdg", "User created in the the value is -  ${scoreModel.total_score}.")
                         }
                     }
-                    topScores.reverse()
+                    topScores.sortByDescending { it.total_score }
+                    if (topScores.size > 3) {
+                        topScores.subList(0, 3).clear() // Remove the first 3 values from the list
+                    }
                     topScoresAdapter.notifyDataSetChanged()
 
                 }

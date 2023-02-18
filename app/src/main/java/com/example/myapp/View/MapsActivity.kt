@@ -101,7 +101,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private val CHANNEL_ID = "com.example.push_notification_channel"
     private val NOTIFICATION_ID = 123
 
-    val sentNotifications = mutableMapOf<String, Boolean>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +144,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         /* drawer layout instance to toggle the menu icon to open
          drawer and back button to close drawer */
-        drawerLayout = findViewById(R.id.my_drawer_layout)
+        drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
         actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout,
             R.string.nav_open,
@@ -165,13 +165,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     startActivity(intent)
                 }
                 R.id.nav_top_scores -> {
-                    setContentView(R.layout.fragment_top_scores)
-                    val fragment:Fragment = TopScores()
-                    val fragmentManager = supportFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
-                    fragmentTransaction.add(R.id.fragment_top_scores, fragment)
-                    fragmentTransaction.addToBackStack(null)
-                    fragmentTransaction.commit()
+//                    setContentView(R.layout.fragment_top_scores)
+//                    val fragment:Fragment = TopScores()
+//                    val fragmentManager = supportFragmentManager
+//                    val fragmentTransaction = fragmentManager.beginTransaction()
+//                    fragmentTransaction.add(R.id.fragment_top_scores, fragment)
+//                    fragmentTransaction.addToBackStack(null)
+//                    fragmentTransaction.commit()
+                    intent = Intent(this, TopScores::class.java)
+                    startActivity(intent)
+
                 }
                 R.id.nav_logout -> {
                     firebaseAuth.signOut()
@@ -288,12 +291,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     myLocationMarker.position = LatLng(currentLocation.latitude, currentLocation.longitude)
                     //check if the user location is close to marker :
                     for (marker in markers) {
+                        val preferences = getSharedPreferences("com.example.myapp.notifications", Context.MODE_PRIVATE)
+                        val isNotificationSent = preferences.getBoolean(marker.marker_id!!, false)
                         val currLatLng =  LatLng(currentLocation.latitude,currentLocation.longitude)
                         val markerLatLng = LatLng(marker.lat!!,marker.long!!)
                         val distance = mapController.calculateDistance(currLatLng, markerLatLng)
-                        val isNotificationSent = sentNotifications.getOrDefault(marker.marker_id!!,false)
+//                        val isNotificationSent = sentNotifications.getOrDefault(marker.marker_id!!,false)
                         if (distance < 500 && !isNotificationSent) {
-                                sentNotifications[marker.marker_id!!] = true
+                            preferences.edit().putBoolean(marker.marker_id!!, true).apply()
                             sendPushNotification(marker.chall_name!!)
                         }
                     }
@@ -443,7 +448,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         val markerModel = getMarkerModel(p0.tag.toString())
         if (markerModel != null) {
             if(markerModel.marker_id != myLocationMarker.tag) {
-                setDialog(markerModel)
+                //check the distance - allows the user start challenge iff the user distance is less than 500 meters
+                val markerLatLng = LatLng(markerModel.lat!!,markerModel.long!!)
+                val currLatLng =  LatLng(currentLocation.latitude,currentLocation.longitude)
+                val distance = mapController.calculateDistance(currLatLng, markerLatLng)
+                if(distance<500) {
+                    setDialog(markerModel)
+                }
+                else{
+                    Toast.makeText(mContext, "You cant start a challenge here , you need to get closer! ", Toast.LENGTH_SHORT).show()
+                }
             }
         }
         return true

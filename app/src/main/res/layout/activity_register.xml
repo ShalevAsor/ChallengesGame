@@ -58,7 +58,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginTop="215dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:inputType="textPersonName"
         android:paddingTop="10dp"
         android:textColor="@color/Black" />
     <View
@@ -91,7 +91,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginTop="305dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:inputType="textPersonName"
         android:paddingTop="10dp"
         android:textColor="@color/Black" />
     <View
@@ -157,7 +157,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginTop="485dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:inputType="textPassword"
         android:paddingTop="10dp"
         android:textColor="@color/Black" />
     <View

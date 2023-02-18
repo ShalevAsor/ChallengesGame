@@ -45,7 +45,7 @@ class UserProfileController(private val view: UserProfileActivity) {
      * @param imageUrl The URL of the image to store.
      * @param userID The ID of the user whose data the image URL should be stored in.
      */
-    private fun loadImageUrlToDatabase(imageUrl: String,userID:String) {
+    private fun loadImageUrlToDatabase(imageUrl: String,userID:String ) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userID)
         dbRef.child("imageUrl").setValue(imageUrl)
             .addOnSuccessListener {
@@ -63,13 +63,14 @@ class UserProfileController(private val view: UserProfileActivity) {
      * @param imageUri The `Uri` of the image to upload.
      * @param userID The ID of the user whose data the image URL should be stored in.
      */
-     fun uploadImageToFirebaseStorage(imageUri: Uri?,userID:String) {
+     fun uploadImageToFirebaseStorage(imageUri: Uri?,userID:String,urlCallBack :  (url: String?) -> Unit) {
         val storageRef = FirebaseStorage.getInstance().reference.child("images/${userID}/image.jpg")
         storageRef.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot ->
                 taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUri ->
                     val imageUrl = downloadUri.toString()
                     loadImageUrlToDatabase(imageUrl,userID)
+                    urlCallBack(imageUrl)
                 }
             }
             .addOnFailureListener { exception ->

@@ -138,6 +138,7 @@ class ChallengeController(private val view: Activity) {
         updateUserPersonalScore(userId,score)
         updateMarkerScore(markerId,userId,score)
         updateMarkerTopScore(markerId,score)
+        updateBillboard(userId,score)
     }
 
 }

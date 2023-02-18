@@ -94,7 +94,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginTop="395dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:inputType="textPassword"
         android:paddingTop="10dp"
         android:textColor="@color/Black" />
 
@@ -181,87 +181,5 @@
 
     </com.google.android.gms.common.SignInButton>
 
-
-    <!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="352dp"-->
-<!--            android:background="@drawable/login_corners_bg"-->
-<!--            android:orientation="vertical"-->
-<!--            android:textAlignment="textStart">-->
-
-<!--            <EditText-->
-<!--                android:id="@+id/loginEmail"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:ems="10"-->
-<!--                android:hint="@string/login_email"-->
-<!--                android:textColorHint="@color/Gray"-->
-<!--                android:textColor="@color/Black"-->
-<!--                android:layout_gravity="end"-->
-<!--                android:inputType="textEmailAddress"-->
-<!--                android:paddingTop="10dp" />-->
-
-<!--            <EditText-->
-<!--                android:id="@+id/loginPass"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:layout_marginTop="15dp"-->
-<!--                android:textColor="@color/Black"-->
-<!--                android:ems="10"-->
-<!--                android:layout_gravity="end"-->
-<!--                android:hint="@string/login_password"-->
-<!--                android:textColorHint="@color/Gray"-->
-<!--                android:inputType="textPassword"-->
-<!--                android:textDirection="locale" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/forgotPass"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:layout_gravity="right"-->
-<!--                android:layout_marginRight="15dp"-->
-<!--                android:text="@string/login_forgot_pass"-->
-<!--                android:textAlignment="center"-->
-<!--                android:textColor="#36073E"-->
-<!--                tools:ignore="RtlCompat,RtlHardcoded" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/btnLogin"-->
-<!--                android:layout_width="200dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:background="#9C27B0"-->
-<!--                android:text="@string/login_btn"-->
-<!--                android:textAllCaps="false" />-->
-
-<!--            <com.google.android.gms.common.SignInButton-->
-<!--                android:id="@+id/sign_in_button"-->
-<!--                android:layout_width="200dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:layout_marginTop="15dp"-->
-<!--                android:layout_gravity="center">-->
-
-<!--            </com.google.android.gms.common.SignInButton>-->
-
-<!--        </LinearLayout>-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/registerPage"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:fontFamily="@font/chonburi"-->
-<!--            android:text="@string/login_create_account"-->
-<!--            android:textSize="16sp"-->
-<!--            android:textStyle="bold"-->
-<!--            android:textColor="@color/white"/>-->
-
-
-<!--    </LinearLayout>-->
 
 </androidx.cardview.widget.CardView>

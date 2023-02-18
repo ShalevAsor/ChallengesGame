@@ -129,7 +129,17 @@ class UserProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            userProfileController.uploadImageToFirebaseStorage(imageUri,uid)
+            userProfileController.uploadImageToFirebaseStorage(imageUri,uid){
+                url ->
+                if(url != null){
+                    Log.e("urlvalue", "the url is : $url")
+                    val profileImage: CircleImageView = findViewById(R.id.user_profile_image)
+                    Glide.with(applicationContext)
+                        .load(url)
+                        .into(profileImage)
+                }
+            }
+
         }
     }
 
