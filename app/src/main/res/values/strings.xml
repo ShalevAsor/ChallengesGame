@@ -8,6 +8,9 @@
     <string name="login_title">The Challenges Game</string>
     <string name="login_create_account">New User? SignUp</string>
     <string name="login_forgot_pass">Forgot password?</string>
+    <string name="login_reset_pass">Reset your password</string>
+    <string name="login_reset_pass_btn">Reset</string>
+
 
     <!-- Strings register -->
     <string name="register_first_name">First Name</string>

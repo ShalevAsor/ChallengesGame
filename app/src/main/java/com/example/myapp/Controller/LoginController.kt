@@ -1,14 +1,19 @@
 package com.example.myapp.Controller
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.myapp.Model.ScoreModel
 import com.example.myapp.Model.UserModel
+import com.example.myapp.R
 import com.example.myapp.View.LoginActivity
 import com.example.myapp.View.MapsActivity
 import com.example.myapp.View.RegisterActivity
@@ -18,8 +23,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import java.util.*
 
 /**
  * Class LoginController is a class that handles the functionality of the Login page.
@@ -39,6 +50,16 @@ class LoginController(private val activity: LoginActivity, private val binding: 
      */
 
     fun onCreate() {
+        requestLocationPermission()
+    }
+    /**
+     * If a user is already signed in, either with email/password or Google Sign In, updates the UI to the map activity.
+     */
+
+    fun onStart() {
+        if (firebaseAuth.currentUser != null || GoogleSignIn.getLastSignedInAccount(activity) != null) {
+            updateUI(activity,"map")
+        }
         binding.registerPage.setOnClickListener {
             updateUI(activity,"register")
         }
@@ -50,15 +71,33 @@ class LoginController(private val activity: LoginActivity, private val binding: 
         binding.signInButton.setOnClickListener {
             signInWithGoogle()
         }
-        requestLocationPermission()
-    }
-    /**
-     * If a user is already signed in, either with email/password or Google Sign In, updates the UI to the map activity.
-     */
+        binding.forgotpass.setOnClickListener{
+            val forgotPassDialog = Dialog(activity)
+            forgotPassDialog.setContentView(R.layout.reset_pass_dialog)
+            val btnCloseDialog = forgotPassDialog.findViewById<TextView>(R.id.closePopup)
+            val btnResetPass = forgotPassDialog.findViewById<Button>(R.id.reset_password)
 
-    fun onStart() {
-        if (firebaseAuth.currentUser != null || GoogleSignIn.getLastSignedInAccount(activity) != null) {
-            updateUI(activity,"map")
+            btnCloseDialog.setOnClickListener {
+                forgotPassDialog.dismiss()
+            }
+
+            btnResetPass.setOnClickListener {
+                val email = forgotPassDialog.findViewById<EditText>(R.id.reset_pass_email).text.toString()
+                if (email.isEmpty()) {
+                    Toast.makeText(activity, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                firebaseAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(activity, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(activity, "Failed to send password reset email: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+            }
+            forgotPassDialog.show()
         }
     }
     /**
@@ -96,6 +135,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             val firstName = account.givenName as String
             // TODO: Replace the hardcoded password with a strong password generator
             val password = "123456"
+            // if the user is exist , sign in with email and password
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -193,5 +233,30 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             dbRef_users.child(userId).setValue(fullUser).addOnCompleteListener {}
             dbRef_billboard.child(userId).setValue(scoreModer).addOnCompleteListener {}
         }
+    }
+
+    private fun generatePassword(length: Int): String {
+        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9') + listOf('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '<', '>', '?', '/')
+        val random = Random()
+        return (1..length)
+            .map { random.nextInt(charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
+    }
+
+    private fun getUserPassword(userID: String, userCallback: (userPassword: String?) -> Unit) {
+        val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userID)
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                Log.i("user2IsTHE", "Failed to read value.$user")
+                userCallback(user?.pass)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("values", "Failed to read value.", error.toException())
+            }
+        })
     }
 }

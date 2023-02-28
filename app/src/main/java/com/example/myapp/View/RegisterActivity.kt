@@ -38,6 +38,12 @@ class RegisterActivity : AppCompatActivity() {
 
         registerController = RegisterController(binding, firebaseAuth, dbRef, dbRef_2)
 
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         binding.registerPage.setOnClickListener {
             registerController.goToLogin()
         }

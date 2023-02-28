@@ -109,6 +109,18 @@
         android:layout_marginTop="433dp"
         android:background="@drawable/line"
         />
+    <TextView
+        android:id="@+id/forgotpass"
+        android:layout_width="140dp"
+        android:layout_height="28dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="450dp"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/login_forgot_pass"
+        android:textAppearance="@style/new_user_si"
+        android:gravity="top"
+        />
 
     <Button
         android:id="@+id/btnLogin"

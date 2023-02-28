@@ -43,14 +43,16 @@ import com.google.firebase.database.*
 import com.google.maps.android.clustering.ClusterManager
 import java.util.*
 import com.example.myapp.Model.Callback
+import com.example.myapp.Model.MarkerItem
 import com.example.myapp.R
+import com.google.maps.android.clustering.ClusterItem
 
 /**
  * This is the main activity , this class get the user current location in real time and display the location
  * represents by a marker , the marker location update in real time.
  * this class allows the user to start a challenge , add a challenge and navigate between the different activities
  */
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener,ClusterManager.OnClusterItemClickListener<MarkerItem> {
 
     //firebase variables
     private lateinit var firebaseAuth: FirebaseAuth
@@ -101,6 +103,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private val CHANNEL_ID = "com.example.push_notification_channel"
     private val NOTIFICATION_ID = 123
 
+    //clusterManager to manage the markers
+
+    private lateinit var clusterManager: ClusterManager<MarkerItem>
 
 
 
@@ -108,22 +113,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         super.onCreate(savedInstanceState)
         /* init firebase variables */
         firebaseAuth = FirebaseAuth.getInstance()
-//        if(firebaseAuth.currentUser == null){
-//        Log.e("mydata2", "Value is: ${firebaseAuth.currentUser}")
-//            intent = Intent(this, LoginActivity::class.java)
-//            startActivity(intent)
-//        }
 
         dbRef = FirebaseDatabase.getInstance().getReference("Markers")
-        //init controller
-//        if (firebaseAuth.currentUser == null) {
-//            val intent = Intent(this, LoginActivity::class.java)
-//            startActivity(intent)
-//            finish()
-//        } else {
-//            userID = firebaseAuth.currentUser!!.uid
-//            // Continue with the rest of your code
-//        }
         if(firebaseAuth.currentUser == null){
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
@@ -157,35 +148,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         actionBarDrawerToggle.syncState()
         // to make the Navigation drawer icon always appear on the action bar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        // handle the navigation item click
-        navigationView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_profile -> {
-                    intent = Intent(this, UserProfileActivity::class.java)
-                    startActivity(intent)
-                }
-                R.id.nav_top_scores -> {
-//                    setContentView(R.layout.fragment_top_scores)
-//                    val fragment:Fragment = TopScores()
-//                    val fragmentManager = supportFragmentManager
-//                    val fragmentTransaction = fragmentManager.beginTransaction()
-//                    fragmentTransaction.add(R.id.fragment_top_scores, fragment)
-//                    fragmentTransaction.addToBackStack(null)
-//                    fragmentTransaction.commit()
-                    intent = Intent(this, TopScores::class.java)
-                    startActivity(intent)
-
-                }
-                R.id.nav_logout -> {
-                    firebaseAuth.signOut()
-                    signOutGoogle()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finishAffinity()
-                }
-            }
-            true
-        }
 
 
         //load markers from database
@@ -194,8 +156,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         //save device last location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-//        setMarkersOnMap()
-//        getUserCurrentLocation()
+
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -221,12 +182,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     mapFragment.getMapAsync(this)
                 }
             }
-
-//        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        //mapFragment.getMapAsync(this)
-
-        //since map
-
 
     }
 
@@ -364,7 +319,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         mMap.setOnMarkerClickListener(this)
 
         getUserCurrentLocation()
-        setMarkersOnMap()
+       // setMarkersOnMap()
+
         // Get the current location of the device and set the position of the map.
 
         val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
@@ -377,11 +333,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         val markerTag = UUID.randomUUID().toString()
         myLocationMarker = mMap.addMarker(markerOptions)!!
         myLocationMarker.tag = markerTag
-        //currMarker.title = "My location!"
         myLocationMarker.showInfoWindow()
 
+//        //cluster
+         clusterManager = ClusterManager(mContext, mMap)
+        val clusterRenderer = MarkerRenderer(this, mMap, clusterManager)
+        clusterManager.renderer = clusterRenderer
+//
+//      // Point the map's listeners at the listeners implemented by the cluster
 
-        //set markers from database
+        mMap.setOnCameraIdleListener(clusterManager)
+        clusterManager.setOnClusterItemClickListener (this)
+        for (marker in markers){
+            addItems(marker)
+        }
+
 
 
 
@@ -404,13 +370,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
         }
+
+        navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+
+                R.id.nav_profile -> {
+                    intent = Intent(this, UserProfileActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_top_scores -> {
+                    intent = Intent(this, TopScores::class.java)
+                    startActivity(intent)
+
+                }
+                R.id.nav_logout -> {
+                    firebaseAuth.signOut()
+                    signOutGoogle()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finishAffinity()
+                }
+            }
+            true
+        }
     }
-
-    /**
-     * This method add the Marker model on the real time  database
-     */
-
-
 
     /**
      * This method allows to draw a circle where the center of the circle is Marker
@@ -432,33 +415,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         mMap.addCircle(circleOptions)
     }
-
     /**
      * When the marker has clicked open the popup dialog
      * Need to load the popup dialog according to the challenge type
      */
 
     override fun onMarkerClick(p0: Marker): Boolean {
-        //load marker dialog
+        //if the user click on current location marker display info window with my location title
         if(p0.tag.toString()== myLocationMarker.tag){
             //user clicked on my location icon
             p0.title = "My Location!"
             p0.showInfoWindow()
-        }
-        val markerModel = getMarkerModel(p0.tag.toString())
-        if (markerModel != null) {
-            if(markerModel.marker_id != myLocationMarker.tag) {
-                //check the distance - allows the user start challenge iff the user distance is less than 500 meters
-                val markerLatLng = LatLng(markerModel.lat!!,markerModel.long!!)
-                val currLatLng =  LatLng(currentLocation.latitude,currentLocation.longitude)
-                val distance = mapController.calculateDistance(currLatLng, markerLatLng)
-                if(distance<500) {
-                    setDialog(markerModel)
-                }
-                else{
-                    Toast.makeText(mContext, "You cant start a challenge here , you need to get closer! ", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
         return true
     }
@@ -552,10 +519,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     startActivity(intent)
                 }
             }
-            //check if current marker score is lower then the score of the game
-
-
-
 
         }
     }
@@ -582,7 +545,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             val latLng = LatLng(marker.lat as Double, marker.long as Double)
             val iconID = getMarkerIcon(marker.chall_name as String)
             val markerOptions = MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(iconID))
-            //setUpClusterer(marker)
             mMap.addMarker(markerOptions)?.tag = marker.marker_id
         }
     }
@@ -618,10 +580,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                         val currMarkerTag = UUID.randomUUID().toString()
                         val markerIconID = getMarkerIcon(challengeSelected)
                         val challengeDescription = getDescription(challengeSelected)
-                        val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
-                            BitmapDescriptorFactory.fromResource(markerIconID)
-                        ))!!
-                        currMarker.tag = currMarkerTag
+//                        val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
+//                            BitmapDescriptorFactory.fromResource(markerIconID)
+//                        ))!!
+//                        currMarker.tag = currMarkerTag
+                        val markerToAdd = MarkerModel(currMarkerTag,
+                            challengeSelected,
+                            challengeDescription,
+                            markerLocation.latitude,
+                            markerLocation.longitude,
+                            0,
+                            0)
+                        addItems(markerToAdd)
                         Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
                         //add to database
                         mapController.addMarker(
@@ -638,6 +608,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerLocation, 15.0f))
 
                         addMarkerPupUp.dismiss()
+                        refreshView()
                     }
                 }
 
@@ -715,31 +686,45 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         onBackPressed()
         return true
     }
-    //    private fun setUpClusterer(marker:MarkerModel) {
-//        // Initialize the manager with the context and the map.
-//        // (Activity extends context, so we can pass 'this' in the constructor.)
-//        clusterManager = ClusterManager(mContext, mMap)
-//
-//        // Point the map's listeners at the listeners implemented by the cluster
-//        // manager.
-//        mMap.setOnCameraIdleListener(clusterManager)
-//        //mMap.setOnMarkerClickListener(clusterManager)
-//
-//        // Add cluster items (markers) to the cluster manager.
-//        addItems(marker)
-//    }
-//
-//    private fun addItems(markerModel: MarkerModel) {
-//
-//
-//        // Create a cluster item for the marker and set the title and snippet using the constructor.
-//        val infoWindowItem = MyItem(markerModel.lat as Double, markerModel.long as Double, markerModel.chall_name as String
-//            ,markerModel.chall_description as  String)
-//
-//        // Add the cluster item (marker) to the cluster manager.
-//        clusterManager.addItem(infoWindowItem)
-//        }
-//    }
+
+    private fun addItems(markerModel: MarkerModel) {
+        // Create a cluster item for the marker
+        val infoWindowItem = MarkerItem(markerModel.lat as Double, markerModel.long as Double,markerModel.marker_id as String, markerModel.chall_name as String
+            ,markerModel.chall_description as  String)
+
+        // Add the cluster item (marker) to the cluster manager.
+        clusterManager.addItem(infoWindowItem)
+
+    }
+
+    override fun onClusterItemClick(item: MarkerItem?): Boolean {
+
+        val markerModel = item?.let { getMarkerModel(it.id) }
+        Log.i("onlyRandomKey","isvisited")
+        if (markerModel != null) {
+            if(markerModel.marker_id != myLocationMarker.tag) {
+                //check the distance - allows the user start challenge iff the user distance is less than 500 meters
+                val markerLatLng = LatLng(markerModel.lat!!,markerModel.long!!)
+                val currLatLng =  LatLng(currentLocation.latitude,currentLocation.longitude)
+                val distance = mapController.calculateDistance(currLatLng, markerLatLng)
+                if(distance<500) {
+                    setDialog(markerModel)
+                }
+                else{
+                    Toast.makeText(mContext, "You cant start a challenge here , you need to get closer! ", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        return true
+    }
+
+    private fun refreshView(){
+        val intent = Intent(this, MapsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+
 }
 
 
