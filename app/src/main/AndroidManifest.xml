@@ -49,6 +49,7 @@
         </activity>
         <activity
             android:name=".View.TapTheNumChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -56,6 +57,7 @@
         </activity>
         <activity
             android:name=".DestinationsChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -63,6 +65,7 @@
         </activity>
         <activity
             android:name=".View.ButtonChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -70,6 +73,7 @@
         </activity>
         <activity
             android:name=".View.FlagChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -77,6 +81,7 @@
         </activity>
         <activity
             android:name=".View.MathChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -84,6 +89,7 @@
         </activity>
         <activity
             android:name=".View.GussTheCityChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -91,6 +97,7 @@
         </activity>
         <activity
             android:name=".View.LogoChallenge"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
