@@ -1,7 +1,7 @@
 package com.example.myapp.View
 
-
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -13,105 +13,185 @@ import com.google.firebase.auth.FirebaseAuth
 import java.util.logging.Logger
 
 class MathChallenge : AppCompatActivity() {
-    private var counter_for_right_answers=0
+    private var counterForRightAnswers = 0
     private val LOG = Logger.getLogger(this.javaClass.name)
     private lateinit var challengeController: ChallengeController
+    private lateinit var button1: Button
+    private lateinit var button2: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getSupportActionBar()?.hide()
+
+        // Hide the action bar
+        supportActionBar?.hide()
+
+        // Set the layout for this activity
         setContentView(R.layout.activity_math_challenge)
+
+        // Initialize the challenge controller
         challengeController = ChallengeController(this)
 
-        var time_in_sec=15;
-        val timer = object: CountDownTimer(15000, 1000) {
+        // Set the time for the challenge (in seconds)
+        var time_in_sec = 15
+
+        // Create the countdown timer
+        val timer = object : CountDownTimer(15000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                println("$time_in_sec sec")
+                LOG.info("$time_in_sec sec")
 
-                val timeView: TextView = findViewById(R.id.timetView3) as TextView
-                timeView.text="Time left: $time_in_sec"
+                // Update the time left text view
+                val timeView: TextView = findViewById(R.id.timetView3)
+                timeView.text = "Time left: $time_in_sec"
 
+                // Decrement the time left
                 time_in_sec--
             }
 
             override fun onFinish() {
+                // When the timer is finished, update the scores in the database and start the MapsActivity
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 val markerId = intent.getStringExtra("MARKER_ID")
-                if(markerId != null && userId != null ) {
-                    challengeController.updateAllScores(userId, markerId.toString(), counter_for_right_answers)
+
+                if (markerId != null && userId != null) {
+                    challengeController.updateAllScores(
+                        userId,
+                        markerId.toString(),
+                        counterForRightAnswers
+                    )
                 }
-                println("Time is up with $counter_for_right_answers points")
+
+                LOG.info("Time is up with $counterForRightAnswers points")
+
+                // Start the MapsActivity
                 val intent = Intent(this@MathChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
-        timer.start() // starting the timer
 
-        game() // starting the game
+        // Start the countdown timer
+        timer.start()
+
+        // Start the game
+        game()
     }
 
     override fun onBackPressed() {
+        // Disable going back in the middle of a challenge
         LOG.info("Can not go back in a middle of a challenge")
     }
 
     private fun game() {
-        var operation_list = listOf('-','+')
-        var ans:Int
-        var question:String
-        val button_1: Button = findViewById(R.id.button1)
-        val button_2: Button = findViewById(R.id.button2)
+        // Define the possible operations
+        val operation_list = listOf('-', '+')
 
-        // getting 2 random numbers
+        // Variables to hold the question and answer
+        var ans: Int
+        var question: String
+
+        // Get references to the buttons and score text view
+        button1 = findViewById(R.id.button1)
+        button2 = findViewById(R.id.button2)
+
+        // Get two random numbers
         var num1 = (0..500).random()
         var num2 = (0..500).random()
+
+        // Choose a random operation
         val operationValue = operation_list.random()
 
-        // checking what operation to do
-        if (operationValue=='-'){
+        // Set the question and answer based on the chosen operation
+        if (operationValue == '-') {
             ans = num1 - num2
             question = "$num1 - $num2"
-        }
-        else{
+        } else {
             ans = num1 + num2
             question = "$num1 + $num2"
         }
-        var fake_ans = (ans-100..ans+100).random()
+        var fakeAns = (ans - 100..ans + 100).random()
 
         // setting the question on the screen
-        val textView = findViewById<TextView>(R.id.questionTxt)
-        textView.setText(question).toString()
+        val questionTextView = findViewById<TextView>(R.id.questionTxt)
+        questionTextView.text = question
 
-        val right_button = (1..2).random() // getting a random number to place the right answer
+        val rightButton = (1..2).random() // getting a random number to place the right answer
 
-        // setting the answers in button txt
-        if (right_button==1) {
-            button_1.text = ans.toString()
-            button_2.text = fake_ans.toString()
-        }
-        else{
-            button_1.text = fake_ans.toString()
-            button_2.text = ans.toString()
-        }
-
-        // validating the answer and starting new game
-        button_1.setOnClickListener {
-            if (right_button==1) counter_for_right_answers++
-            println(counter_for_right_answers)
-
-            val scoreView: TextView = findViewById(R.id.scoreView3) as TextView
-            scoreView.text="Score: $counter_for_right_answers"
-
-            game()
+        // set the answers in the buttons
+        if (rightButton == 1) {
+            button1.text = ans.toString()
+            button2.text = fakeAns.toString()
+        } else {
+            button1.text = fakeAns.toString()
+            button2.text = ans.toString()
         }
 
-        button_2.setOnClickListener {
-            if (right_button==2) counter_for_right_answers++
-            println(counter_for_right_answers)
-
-            val scoreView: TextView = findViewById(R.id.scoreView3) as TextView
-            scoreView.text="Score: $counter_for_right_answers"
-
-            game()
+        // set the onClickListener for button1
+        button1.setOnClickListener {
+            handleAnswer(button1, button2, rightButton, 1)
         }
+
+        // set the onClickListener for button2
+        button2.setOnClickListener {
+            handleAnswer(button2, button1, rightButton, 2)
+        }
+    }
+
+    /**
+     * A helper function to handle the user's answer.
+     *
+     * @param userButton the button clicked by the user
+     * @param otherButton the other button not clicked by the user
+     * @param rightButton the button with the right answer
+     * @param rightAnswer the right answer to the question
+     */
+    private fun handleAnswer(
+        userButton: Button,
+        otherButton: Button,
+        rightButton: Int,
+        currButtonNum: Int
+    ) {
+        disableButtons() // disable the buttons to prevent multiple clicks
+        val originalButtonColor =
+            userButton.background // get the original color of the clicked button
+
+        // check if the user's answer is correct
+        if (currButtonNum == rightButton) {
+            userButton.setBackgroundColor(Color.GREEN)
+            counterForRightAnswers++
+        } else {
+            userButton.setBackgroundColor(Color.RED)
+        }
+
+        // create a timer to reset the buttons and start a new game
+        val timer = object : CountDownTimer(500, 100) {
+            override fun onTick(millisUntilFinished: Long) {}
+
+            override fun onFinish() {
+                userButton.background =
+                    originalButtonColor // reset the background color of the user's button
+                otherButton.background =
+                    originalButtonColor // reset the background color of the other button
+                enableButtons() // enable the buttons for the next game
+                val scoreTextView = findViewById<TextView>(R.id.scoreView3)
+                scoreTextView.text = "Score: $counterForRightAnswers" // update the score text
+                game() // start a new game
+            }
+        }
+        timer.start()
+    }
+
+    /**
+     * A helper function to disable the answer buttons.
+     */
+    private fun disableButtons() {
+        button1.isEnabled = false
+        button2.isEnabled = false
+    }
+
+    /**
+     * A helper function to enable the answer buttons.
+     */
+    private fun enableButtons() {
+        button1.isEnabled = true
+        button2.isEnabled = true
     }
 }
