@@ -2,6 +2,7 @@ package com.example.myapp.View
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -16,26 +17,30 @@ import java.util.logging.Logger
 
 class LogoChallenge : AppCompatActivity() {
 
-    private var counter_for_right_answers=0
+    private var counterForRightAnswers=0
     private val LOG = Logger.getLogger(this.javaClass.name)
     private lateinit var scoreView: TextView
-    private lateinit var button_1: Button
-    private lateinit var button_2: Button
-    private lateinit var button_3: Button
-    private lateinit var button_4: Button
+    private lateinit var button1: Button
+    private lateinit var button2: Button
+    private lateinit var button3: Button
+    private lateinit var button4: Button
+    private lateinit var buttons: Array<Button>
     private lateinit var imageView: ImageView
     private lateinit var challengeController: ChallengeController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
+
         setContentView(R.layout.activity_logo_challenge)
+
         challengeController = ChallengeController(this)
         scoreView = findViewById(R.id.thescoreView)
-        button_1 = findViewById(R.id.bu1)
-        button_2 = findViewById(R.id.bu2)
-        button_3 = findViewById(R.id.bu3)
-        button_4 = findViewById(R.id.bu4)
+        button1 = findViewById(R.id.bu1)
+        button2 = findViewById(R.id.bu2)
+        button3 = findViewById(R.id.bu3)
+        button4 = findViewById(R.id.bu4)
+        buttons = arrayOf(button1, button2, button3, button4)
         imageView = findViewById<ImageView>(R.id.theimageView)
         var time_in_sec=15;
 
@@ -54,9 +59,9 @@ class LogoChallenge : AppCompatActivity() {
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 val markerId = intent.getStringExtra("MARKER_ID")
                 if(markerId != null && userId != null ) {
-                    challengeController.updateAllScores(userId, markerId.toString(), counter_for_right_answers)
+                    challengeController.updateAllScores(userId, markerId.toString(), counterForRightAnswers)
                 }
-                println("Time is up with $counter_for_right_answers points")
+                println("Time is up with $counterForRightAnswers points")
                 val intent = Intent(this@LogoChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
@@ -71,10 +76,10 @@ class LogoChallenge : AppCompatActivity() {
     }
 
     private fun game() {
-        var random_logo_num:Int
-        var random_of_fake_logo_num1:Int
-        var random_of_fake_logo_num2:Int
-        var random_of_fake_logo_num3:Int
+        var logoNum:Int
+        var fakeLogoNum1:Int
+        var fakeLogoNum2:Int
+        var fakeLogoNum3:Int
 
         val logo_list = ArrayList<Int>()
         val logo_arr = resources.obtainTypedArray(R.array.logos)
@@ -86,91 +91,138 @@ class LogoChallenge : AppCompatActivity() {
 
         // getting a random logo number
         do {
-            random_logo_num = (0 until logo_list.size).random()
-            random_of_fake_logo_num1 = (0 until logo_list.size).random()
-            random_of_fake_logo_num2 = (0 until logo_list.size).random()
-            random_of_fake_logo_num3 = (0 until logo_list.size).random()
-        }while (random_logo_num==random_of_fake_logo_num1 || random_logo_num==random_of_fake_logo_num2 || random_logo_num==random_of_fake_logo_num3)
+            logoNum = (0 until logo_list.size).random()
+            fakeLogoNum1 = (0 until logo_list.size).random()
+            fakeLogoNum2 = (0 until logo_list.size).random()
+            fakeLogoNum3 = (0 until logo_list.size).random()
+        }while (logoNum==fakeLogoNum1 || logoNum==fakeLogoNum2 || logoNum==fakeLogoNum3)
 
         // setting the image logo on the screen
-        imageView.setImageDrawable(ContextCompat.getDrawable(this, logo_list[random_logo_num]))
+        imageView.setImageDrawable(ContextCompat.getDrawable(this, logo_list[logoNum]))
 
         // getting the right logo name
-        imageView.setTag(logo_list[random_logo_num])
+        imageView.setTag(logo_list[logoNum])
         var right_logo_name = resources.getResourceName(imageView.getTag() as Int)
         right_logo_name=right_logo_name.substring(right_logo_name.indexOf('/')+1).replace('_',' ')
 
         //getting the fake logo name 1
-        imageView.setTag(logo_list[random_of_fake_logo_num1])
+        imageView.setTag(logo_list[fakeLogoNum1])
         var fake_logo_name1 = resources.getResourceName(imageView.getTag() as Int)
         fake_logo_name1=fake_logo_name1.substring(fake_logo_name1.indexOf('/')+1).replace('_',' ')
 
         //getting the fake logo name 2
-        imageView.setTag(logo_list[random_of_fake_logo_num2])
+        imageView.setTag(logo_list[fakeLogoNum2])
         var fake_logo_name2 = resources.getResourceName(imageView.getTag() as Int)
         fake_logo_name2 = fake_logo_name2.substring(fake_logo_name2.indexOf('/')+1).replace('_',' ')
 
         //getting the fake logo name 3
-        imageView.setTag(logo_list[random_of_fake_logo_num3])
+        imageView.setTag(logo_list[fakeLogoNum3])
         var fake_logo_name3 = resources.getResourceName(imageView.getTag() as Int)
         fake_logo_name3=fake_logo_name3.substring(fake_logo_name3.indexOf('/')+1).replace('_',' ')
 
 
-        val right_button = (1..4).random() // getting a random number to place the right answer
+        val rightButton = (1..4).random() // getting a random number to place the right answer
 
         // setting the answers in button txt
-        if (right_button==1) {
-            button_1.text = right_logo_name
-            button_2.text = fake_logo_name1
-            button_3.text = fake_logo_name2
-            button_4.text = fake_logo_name3
+        if (rightButton==1) {
+            button1.text = right_logo_name
+            button2.text = fake_logo_name1
+            button3.text = fake_logo_name2
+            button4.text = fake_logo_name3
         }
-        else if (right_button==2){
-            button_1.text = fake_logo_name1
-            button_2.text = right_logo_name
-            button_3.text = fake_logo_name2
-            button_4.text = fake_logo_name3
+        else if (rightButton==2){
+            button1.text = fake_logo_name1
+            button2.text = right_logo_name
+            button3.text = fake_logo_name2
+            button4.text = fake_logo_name3
         }
-        else if (right_button==3){
-            button_1.text = fake_logo_name1
-            button_2.text = fake_logo_name2
-            button_3.text = right_logo_name
-            button_4.text = fake_logo_name3
+        else if (rightButton==3){
+            button1.text = fake_logo_name1
+            button2.text = fake_logo_name2
+            button3.text = right_logo_name
+            button4.text = fake_logo_name3
         }
         else{
-            button_1.text = fake_logo_name1
-            button_2.text = fake_logo_name2
-            button_3.text = fake_logo_name3
-            button_4.text = right_logo_name
+            button1.text = fake_logo_name1
+            button2.text = fake_logo_name2
+            button3.text = fake_logo_name3
+            button4.text = right_logo_name
         }
 
         // validating the answer and starting new game
-        button_1.setOnClickListener {
-            if (right_button==1) counter_for_right_answers++
-            println(counter_for_right_answers)
-            scoreView.text="Score: $counter_for_right_answers"
-            game()
+        button1.setOnClickListener {
+            handleAnswer(rightButton, 1)
         }
 
-        button_2.setOnClickListener {
-            if (right_button==2) counter_for_right_answers++
-            println(counter_for_right_answers)
-            scoreView.text="Score: $counter_for_right_answers"
-            game()
+        button2.setOnClickListener {
+            handleAnswer(rightButton, 2)
         }
 
-        button_3.setOnClickListener {
-            if (right_button==3) counter_for_right_answers++
-            println(counter_for_right_answers)
-            scoreView.text="Score: $counter_for_right_answers"
-            game()
+        button3.setOnClickListener {
+            handleAnswer(rightButton, 3)
         }
 
-        button_4.setOnClickListener {
-            if (right_button==4) counter_for_right_answers++
-            println(counter_for_right_answers)
-            scoreView.text="Score: $counter_for_right_answers"
-            game()
+        button4.setOnClickListener {
+            handleAnswer(rightButton, 4)
         }
+    }
+
+    /**
+     * A helper function to handle the user's answer.
+     *
+     * @param userButton the button clicked by the user
+     * @param otherButton the other button not clicked by the user
+     * @param rightButton the button with the right answer
+     * @param rightAnswer the right answer to the question
+     */
+    private fun handleAnswer(
+        rightButton: Int,
+        currButtonNum: Int
+    ) {
+        disableButtons() // disable the buttons to prevent multiple clicks
+        val originalButtonColor = button1.background // get the original color of the clicked button
+
+        // check if the user's answer is correct
+        if (currButtonNum == rightButton) {
+            counterForRightAnswers++
+        }
+        changeButtonsColor(rightButton)
+
+        // create a timer to reset the buttons and start a new game
+        val timer = object : CountDownTimer(500, 100) {
+            override fun onTick(millisUntilFinished: Long) {}
+
+            override fun onFinish() {
+                for (b in buttons) {
+                    b.background = originalButtonColor
+                }
+                enableButtons() // enable the buttons for the next game
+
+                scoreView.text = "Score: $counterForRightAnswers" // update the score text
+                game() // start a new game
+            }
+        }
+        timer.start()
+    }
+
+    private fun changeButtonsColor(rightButton: Int) {
+        for (i in 0 until buttons.size){
+            if (i!=rightButton-1) {
+                buttons[i].setBackgroundColor(Color.RED)
+            } else buttons[i].setBackgroundColor(Color.GREEN)
+        }
+    }
+    private fun disableButtons() {
+        button1.isEnabled = false
+        button2.isEnabled = false
+        button3.isEnabled = false
+        button4.isEnabled = false
+    }
+
+    private fun enableButtons() {
+        button1.isEnabled = true
+        button2.isEnabled = true
+        button3.isEnabled = true
+        button4.isEnabled = true
     }
 }
