@@ -21,5 +21,5 @@ data class MarkerModel(
     var lat: Double? = null,
     var long: Double? = null,
     var top_score: Int? = null,
-    var time_to_live: Int?=null
+    var time_to_live: Long?=null
 )

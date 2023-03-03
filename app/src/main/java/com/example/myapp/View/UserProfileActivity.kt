@@ -66,7 +66,7 @@ class UserProfileActivity : AppCompatActivity() {
         editLastName.visibility = View.GONE
         saveBtn.visibility = View.GONE
         uploadImageBtn.visibility = View.GONE
-
+        supportActionBar?.title = "Challenges Game"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         dbRef = FirebaseDatabase.getInstance().getReference("UserModel")

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,8 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +24,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.myapp.Controller.MapController
 import com.example.myapp.DestinationsChallenge
 import com.example.myapp.MainActivity
@@ -46,6 +47,7 @@ import com.example.myapp.Model.Callback
 import com.example.myapp.Model.MarkerItem
 import com.example.myapp.R
 import com.google.maps.android.clustering.ClusterItem
+import de.hdodenhof.circleimageview.CircleImageView
 
 /**
  * This is the main activity , this class get the user current location in real time and display the location
@@ -87,6 +89,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     //const variables
     private val radius = 500.0
     private val defaultZoom = 12f
+    // Set default value to 18 to represent 6 pm
+    val defaultDarkMapHour = 18
 
     //general
     private lateinit var mContext: Context
@@ -115,8 +119,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         firebaseAuth = FirebaseAuth.getInstance()
 
         dbRef = FirebaseDatabase.getInstance().getReference("Markers")
+        //deleteMarkers()
         if(firebaseAuth.currentUser == null){
-            val intent = Intent(this, RegisterActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -141,18 +146,48 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             R.string.nav_open,
             R.string.nav_close
         )
+        //add banner with user data
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val bannerLayout = inflater.inflate(R.layout.map_banner_layout, null)
+        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        params.gravity = Gravity.TOP
+        bannerLayout.layoutParams = params
+        val userFullName: TextView = bannerLayout.findViewById(R.id.user_name)
+        val userScore: TextView = bannerLayout.findViewById(R.id.user_score)
+        val userImage:CircleImageView = bannerLayout.findViewById(R.id.map_user_profile_image)
+        mapController.getUser(userID){ user ->
+            if(user != null){
+                userFullName.text = user.firstName + " " +  user.lastName
+                userScore.text = "Score: "+ user.personalScore.toString()
+                if(user.imageUrl.isNullOrEmpty()) {
+                    Glide.with(applicationContext)
+                        .load(R.drawable.ic_defalut_profile_image)
+                        .into(userImage)
+                }
+                else{
+                    Glide.with(applicationContext)
+                        .load(user.imageUrl)
+                        .into(userImage)
+                }
+            }
+        }
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        val mapView = mapFragment.view as ViewGroup
+        mapView.addView(bannerLayout)
         currentLocation = Location("")
         // pass the Open and Close toggle for the drawer layout listener
         // to toggle the button
         drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
         // to make the Navigation drawer icon always appear on the action bar
+        supportActionBar?.title = "Challenges Game"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
         //load markers from database
         markers = mapController.getMarkers()
-        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+       // mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
         //save device last location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -318,8 +353,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         mMap = googleMap
         mMap.setOnMarkerClickListener(this)
 
+        //if the time is after 6 pm change to night style map
+        val currentTime = Calendar.getInstance().time
+        val currentHour = currentTime.hours
+        Log.i("TheCurrentTimeIs","Current Time $currentTime , the currentHour is $currentHour")
+        if(currentHour > defaultDarkMapHour) {
+            // Load the map style JSON file
+            val mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.map_style
+            )
+            mMap.setMapStyle(mapStyleOptions)
+        }
+
         getUserCurrentLocation()
        // setMarkersOnMap()
+
 
         // Get the current location of the device and set the position of the map.
 
@@ -590,7 +638,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                             markerLocation.latitude,
                             markerLocation.longitude,
                             0,
-                            0)
+                            Date().time
+                        )
                         addItems(markerToAdd)
                         Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
                         //add to database
@@ -601,7 +650,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                             markerLocation.latitude,
                             markerLocation.longitude,
                             0,
-                            0
+                            Date().time
                         )
                         updateMarkersOnTheList()
                         mMap.animateCamera(CameraUpdateFactory.newLatLng(markerLocation))
@@ -723,6 +772,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         startActivity(intent)
         finish()
     }
+    //Deletes all the markers after a week
+//    fun deleteMarkers(){
+//        val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
+//        val markerListener = object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    for (empSnap in dataSnapshot.children) {
+//                        val markerData = empSnap.getValue(MarkerModel::class.java)
+//                        val marker_id= markerData?.marker_id
+//                        val now = Calendar.getInstance().timeInMillis
+//                        val expiry = markerData?.time_to_live
+//                        val elapsed = now - expiry!!
+//                        val week = 24 * 60 * 60 * 1000 * 7
+//                        val markerRef=dbRef.child("$marker_id")
+//                        if(markerData!=null && elapsed> week){
+//                            markerRef.removeValue()
+//
+//                        }
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+//            }
+//        }
+//
+//        dbRef.addValueEventListener(markerListener)
+//    }
 
 
 }

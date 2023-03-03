@@ -234,6 +234,7 @@ class TopScores : AppCompatActivity() {
         userName = findViewById<TextView>(R.id.my_top_score_user_name)
         myScore = findViewById<TextView>(R.id.my_top_scores_text)
         myImageProfile = findViewById<CircleImageView>(R.id.my_top_score_user_profile)
+        supportActionBar?.title = "Challenges Game"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //set user name and score here

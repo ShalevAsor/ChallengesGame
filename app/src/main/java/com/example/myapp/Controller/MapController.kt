@@ -1,9 +1,11 @@
 package com.example.myapp.Controller
 
 import android.location.Location
+import android.util.Log
 import com.example.myapp.View.MapsActivity
 import com.example.myapp.Model.Callback
 import com.example.myapp.Model.MarkerModel
+import com.example.myapp.Model.UserModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -68,7 +70,7 @@ class MapController(private val view: MapsActivity) {
         lat: Double,
         long: Double,
         topScore: Int,
-        timeToLive: Int
+        timeToLive: Long
     ) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
@@ -111,6 +113,22 @@ class MapController(private val view: MapsActivity) {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 callback.onSuccess(0)
+            }
+        })
+    }
+
+    fun getUser(userID: String, userCallback: (user: UserModel?) -> Unit) {
+        val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userID)
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                Log.i("user2IsTHE", "Failed to read value.$user")
+                userCallback(user)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("values", "Failed to read value.", error.toException())
             }
         })
     }
