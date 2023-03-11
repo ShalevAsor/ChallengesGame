@@ -155,10 +155,10 @@ class MathChallenge : AppCompatActivity() {
 
         // check if the user's answer is correct
         if (currButtonNum == rightButton) {
-            userButton.setBackgroundColor(Color.GREEN)
+            userButton.setBackgroundResource(R.drawable.rounded_corner_green_background)
             counterForRightAnswers++
         } else {
-            userButton.setBackgroundColor(Color.RED)
+            userButton.setBackgroundResource(R.drawable.rounded_corner_red_background)
         }
 
         // create a timer to reset the buttons and start a new game

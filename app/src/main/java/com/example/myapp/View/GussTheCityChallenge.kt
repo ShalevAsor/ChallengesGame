@@ -226,8 +226,8 @@ class GussTheCityChallenge : AppCompatActivity() {
     private fun changeButtonsColor(rightButton: Int) {
         for (i in 0 until buttons.size){
             if (i!=rightButton-1) {
-                buttons[i].setBackgroundColor(Color.RED)
-            } else buttons[i].setBackgroundColor(Color.GREEN)
+                buttons[i].setBackgroundResource(R.drawable.rounded_corner_red_background)
+            } else buttons[i].setBackgroundResource(R.drawable.rounded_corner_green_background)
         }
     }
 
