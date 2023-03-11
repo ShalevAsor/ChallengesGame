@@ -98,6 +98,19 @@ class TapTheNumChallenge : AppCompatActivity() {
                 button.text = counter.toString()
                 change_button_to_random_location(displayMetrics, button)
             }
+            else{
+                button.setBackgroundResource(R.drawable.rounded_corner_red_background)
+
+                // create a timer to reset the button color
+                val timer = object : CountDownTimer(300, 100) {
+                    override fun onTick(millisUntilFinished: Long) {}
+
+                    override fun onFinish() {
+                        button.setBackgroundResource(R.drawable.rounded_corner_background)
+                    }
+                }
+                timer.start()
+            }
         }
     }
 

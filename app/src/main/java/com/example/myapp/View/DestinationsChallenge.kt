@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -12,25 +13,25 @@ import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapp.Controller.ChallengeController
+import com.example.myapp.View.JumpActivity
+import com.example.myapp.View.MapsActivity
 import com.example.myapp.databinding.ActivityDestinationsChallengeBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.FirebaseAuth
-import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
-
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityDestinationsChallengeBinding
     private var locationManager: LocationManager? = null
@@ -42,6 +43,9 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var timerTextView: TextView
     private lateinit var scoreView: TextView
     private lateinit var challengeController: ChallengeController
+    private var currMarker = 0
+    private lateinit var specialMarker: Marker
+    private var hasDoublePoints = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,35 +90,70 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
             if (location != null) {
                 val userLocation = LatLng(location.latitude, location.longitude)
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18f))
+
+                val checkPointBitmap = BitmapDescriptorFactory.fromResource(R.drawable.checkpointmarker)
 
                 // Add the predetermined points to the points array
                 if (markers.size==0) {
                     for (i in 1..3) {
                         var point: LatLng? = getLocation(location.latitude, location.longitude, 200)
                         var theMarker: Marker? =
-                            point?.let { MarkerOptions().position(it).title("Point") }
+                            point?.let { MarkerOptions().position(it).icon(checkPointBitmap).title("Point") }
                                 ?.let { mMap.addMarker(it) }
 
                         if (theMarker != null) {
+                            val circleOptions = CircleOptions()
+                                .center(theMarker.position)
+                                .radius(50.0)
+                                .strokeWidth(2f)
+                                .strokeColor(Color.BLUE)
+                                .fillColor(Color.argb(50, 0, 0, 255))
+
                             markers.add(theMarker)
+                            mMap.addCircle(circleOptions)
                         }
                     }
                 }
             }
 
+            // Randomly select a position between point1 and point2
+            val lat = getRandomNumber(markers[0].position.latitude, markers[1].position.latitude)
+            val lng = getRandomNumber(markers[0].position.longitude, markers[1].position.longitude)
+            var newPosition = LatLng(lat, lng)
+
+            // Create a new marker with the double point symbol
+            val doublePointBitmap = BitmapDescriptorFactory.fromResource(R.drawable.storm_marker)
+            val newMarkerOptions = MarkerOptions()
+                .position(newPosition)
+                .icon(doublePointBitmap)
+                .title("New Marker")
+
+            specialMarker = mMap.addMarker(newMarkerOptions)!!
+
+
+
             //adding listener to the markers
             mMap.setOnMarkerClickListener { marker ->
                 val location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                 if (location != null) {
+                    currMarker = getMarkerNum(marker)
 
                     val markerLocation = Location("")
-                    markerLocation.latitude=marker.position.latitude
-                    markerLocation.longitude=marker.position.longitude
+                    markerLocation.latitude = marker.position.latitude
+                    markerLocation.longitude = marker.position.longitude
 
-                    val distance =location.distanceTo(markerLocation)
+                    val distance = location.distanceTo(markerLocation)
                     if (distance > 50) {
-                        Toast.makeText(this, "You are too far from the checkpoint", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "You are too far from the Marker",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else { // the user next to the marker
+
+                        if (marker == specialMarker) handleSpecialMarker(marker)
+                        else{
                         val dialog = AlertDialog.Builder(this)
                         val dialogView = layoutInflater.inflate(R.layout.custom_dialog, null)
 
@@ -122,28 +161,73 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
                         val customDialog = dialog.create()
                         customDialog.show()
 
-                        dialogView.findViewById<Button>(R.id.start_button).setOnClickListener{
+                        dialogView.findViewById<Button>(R.id.start_button).setOnClickListener {
                             customDialog.dismiss()
 
-                            markers.remove(marker)
-                            marker.remove()
-                            score+=50
-                            scoreView.text="Score: $score"
-
-                            if (markers.size==0){ // finishing the game
-                                val userId = FirebaseAuth.getInstance().currentUser?.uid
-                                val markerId = intent.getStringExtra("MARKER_ID")
-                                if(markerId != null && userId != null ) {
-                                    challengeController.updateAllScores(userId, markerId.toString(), score)
-                                }
-                                val intent = Intent(this@DestinationsChallenge, MainActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }
+                            val intent =
+                                Intent(this@DestinationsChallenge, JumpActivity::class.java)
+                            jumpActivityResult.launch(intent)
                         }
                     }
                 }
+                }
                 true
+            }
+        }
+    }
+
+    private fun handleSpecialMarker(marker: Marker) {
+        val randomSpecialMarkerNum = Random.nextInt(0, 2)
+        if (randomSpecialMarkerNum==0){
+            Toast.makeText(
+                this,
+                "You Got Double Points",
+                Toast.LENGTH_SHORT
+            ).show()
+            hasDoublePoints = 1
+        }
+        else{
+            Toast.makeText(
+                this,
+                "You got extra 1 minute",
+                Toast.LENGTH_SHORT
+            ).show()
+            timeLeft += TimeUnit.MINUTES.toMillis(1)
+            timer?.cancel()
+            startTimer()
+        }
+        marker.remove()
+    }
+
+    fun getRandomNumber(min: Double, max: Double): Double {
+        return Random.nextDouble() * (max - min) + min
+    }
+
+    private fun getMarkerNum(marker: Marker): Int {
+        for (i in 0 until markers.size){
+            val m = markers[i]
+            if(m==marker) return i
+        }
+        return -1
+    }
+
+    private val jumpActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val marker = markers[currMarker]
+            markers.remove(marker)
+            marker.remove()
+            score+=30 + 30 * hasDoublePoints
+            scoreView.text="Score: $score"
+
+            if (markers.size==0){ // finishing the game
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                val markerId = intent.getStringExtra("MARKER_ID")
+                if(markerId != null && userId != null ) {
+                    challengeController.updateAllScores(userId, markerId.toString(), score)
+                }
+                val intent = Intent(this@DestinationsChallenge, MapsActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
     }
@@ -159,7 +243,7 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
             override fun onFinish() {
                 updateTimer("Time's up!")
                 Toast.makeText(this@DestinationsChallenge, "Time's up!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@DestinationsChallenge, MainActivity::class.java)
+                val intent = Intent(this@DestinationsChallenge, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -178,7 +262,7 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun getLocation(x0: Double, y0: Double, radius: Int): LatLng {
-        val random = Random()
+        val random = Random
 
         // Convert radius from meters to degrees
         val radiusInDegrees = (radius / 111000f).toDouble()

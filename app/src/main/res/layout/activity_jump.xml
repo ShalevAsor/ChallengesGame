@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:ignore="ExtraText"
+    android:background="@drawable/appbackground_65_nature_outdoors">
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jump 50 times to confirm this checkpoint!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_corner_background"/>
+
+    <TextView
+        android:id="@+id/jump_count_view"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Jumps: 0"
+        android:textSize="72sp"
+        android:textStyle="bold"
+        android:textColor="#041055"
+        android:gravity="center"
+        android:padding="16dp" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="32dp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_corner_background"
+        android:onClick="onCancelClicked" />
+
+</LinearLayout>

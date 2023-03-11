@@ -5,18 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/appbackground_65_nature_outdoors"
-    tools:context=".flagChallenge">
+    tools:context=".View.FlagChallenge">
 
     <Button
         android:id="@+id/button3"
         android:layout_width="135dp"
         android:layout_height="110dp"
         android:text="Button2"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.676"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_corner_background"
         tools:ignore="NotSibling" />
 
     <Button
@@ -24,11 +28,15 @@
         android:layout_width="135dp"
         android:layout_height="110dp"
         android:text="Button"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.668"
         app:layout_constraintStart_toEndOf="@+id/button1"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_corner_background"
         app:layout_constraintVertical_bias="0.921" />
 
     <Button
@@ -36,10 +44,14 @@
         android:layout_width="135dp"
         android:layout_height="110dp"
         android:text="Button"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button1"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_corner_background"
         app:layout_constraintVertical_bias="0.676" />
 
     <Button
@@ -47,12 +59,15 @@
         android:layout_width="135dp"
         android:layout_height="110dp"
         android:text="Button2"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.921"
+        android:background="@drawable/rounded_corner_background"
         tools:ignore="NotSibling" />
 
     <ImageView
