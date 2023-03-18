@@ -46,6 +46,7 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
     private var currMarker = 0
     private lateinit var specialMarker: Marker
     private var hasDoublePoints = 0
+    private var circles = arrayListOf<Circle>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,7 +112,8 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
                                 .fillColor(Color.argb(50, 0, 0, 255))
 
                             markers.add(theMarker)
-                            mMap.addCircle(circleOptions)
+                            val circle = mMap.addCircle(circleOptions)
+                            circles.add(circle)
                         }
                     }
                 }
@@ -214,8 +216,13 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
     private val jumpActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val marker = markers[currMarker]
+            val circle = circles[currMarker]
+
             markers.remove(marker)
             marker.remove()
+
+            circles.remove(circle)
+            circle.remove()
             score+=30 + 30 * hasDoublePoints
             scoreView.text="Score: $score"
 
