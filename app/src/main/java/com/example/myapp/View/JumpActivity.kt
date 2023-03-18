@@ -96,7 +96,7 @@ class JumpActivity : AppCompatActivity(), SensorEventListener {
             val jumpCountView = findViewById<TextView>(R.id.jump_count_view)
             jumpCountView.text = "Jumps: $jumpCount"
 
-            if (jumpCount >= 50) {
+            if (jumpCount >= 20) {
                 // Disable the sensor listener and finish the activity
                 sensorManager.unregisterListener(this)
                 val resultIntent = Intent()
