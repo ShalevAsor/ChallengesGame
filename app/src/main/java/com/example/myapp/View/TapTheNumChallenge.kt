@@ -1,5 +1,6 @@
 package com.example.myapp.View
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -44,12 +45,21 @@ class TapTheNumChallenge : AppCompatActivity() {
                 var counter_for_right_answers = counter-5
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 val markerId = intent.getStringExtra("MARKER_ID")
+                val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
+                val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
+                val challName = intent.getStringExtra("CHALL_NAME")
                 if(markerId != null && userId != null ) {
                     challengeController.updateAllScores(userId, markerId.toString(), counter_for_right_answers)
                 }
                 println("Time is up with $counter_for_right_answers points")
                 val intent = Intent(this@TapTheNumChallenge, MapsActivity::class.java)
-                startActivity(intent)
+                intent.putExtra("SCORE",counter_for_right_answers)
+                intent.putExtra("MARKER_ID",markerId)
+                intent.putExtra("CHALL_NAME",challName)
+                intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
+                intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
+                setResult(Activity.RESULT_OK,intent)
+                finish()
             }
         }
         timer.start() // starting the timer

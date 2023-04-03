@@ -1,5 +1,6 @@
 package com.example.myapp.View
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -51,7 +52,9 @@ class MathChallenge : AppCompatActivity() {
                 // When the timer is finished, update the scores in the database and start the MapsActivity
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 val markerId = intent.getStringExtra("MARKER_ID")
-
+                val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
+                val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
+                val challName = intent.getStringExtra("CHALL_NAME")
                 if (markerId != null && userId != null) {
                     challengeController.updateAllScores(
                         userId,
@@ -64,7 +67,13 @@ class MathChallenge : AppCompatActivity() {
 
                 // Start the MapsActivity
                 val intent = Intent(this@MathChallenge, MapsActivity::class.java)
-                startActivity(intent)
+                intent.putExtra("SCORE",counterForRightAnswers)
+                intent.putExtra("MARKER_ID",markerId)
+                intent.putExtra("CHALL_NAME",challName)
+                intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
+                intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
+                setResult(Activity.RESULT_OK,intent)
+                finish()
             }
         }
 

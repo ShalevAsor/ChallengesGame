@@ -36,6 +36,18 @@
     <string name="user_score">User score:</string>
     <string name="description">Description:</string>
     <string name="start">Start</string>
+    <!-- Strings Popup performance challenge -->
+    <string name="performance_title">Challenge Performance:</string>
+    <string name="p_top_scores">Top score:</string>
+    <string name="p_user_score">Your score:</string>
+    <string name="p_user_top_score">Your best score:</string>
+    <string name="p_ok">OK</string>
+    <string name="p_again">Try Again</string>
+    <string name="p_results">Results:</string>
+    <string name="p_beat_top_scores">Congratulation you are the top scores!</string>
+    <string name="p_beat_user_scores">Congratulation you beat your best scores but its not good enough!</string>
+    <string name="p_bad_scores">Unfortunately you did not break your record</string>
+
     <!-- Strings Popup select challenge -->
     <string name="set_challenge">Set Challenge</string>
     <string name="select_challenge">Select Challenge</string>

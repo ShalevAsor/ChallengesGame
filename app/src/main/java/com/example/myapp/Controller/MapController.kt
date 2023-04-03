@@ -116,6 +116,19 @@ class MapController(private val view: MapsActivity) {
             }
         })
     }
+    fun getChallengeTopScores(markerId: String?,callback: Callback){
+        val ref = FirebaseDatabase.getInstance().getReference("Markers/$markerId/top_score")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val score = dataSnapshot.value as? Long
+                callback.onSuccess(score?.toInt() ?: 0)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                callback.onSuccess(0)
+            }
+        })
+    }
 
     fun getUser(userID: String, userCallback: (user: UserModel?) -> Unit) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userID)

@@ -1,6 +1,7 @@
 package com.example.myapp.View
 
 import android.Manifest
+import android.app.ActivityManager
 import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -47,6 +49,7 @@ import com.example.myapp.Model.Callback
 import com.example.myapp.Model.MarkerItem
 import com.example.myapp.R
 import com.google.maps.android.clustering.ClusterItem
+import com.skydoves.powerspinner.PowerSpinnerView
 import de.hdodenhof.circleimageview.CircleImageView
 
 /**
@@ -59,6 +62,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     //firebase variables
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var dbRef: DatabaseReference
+
     //map controller
     private lateinit var mapController: MapController
 
@@ -75,40 +79,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private lateinit var addMarkerPupUp: Dialog
     private lateinit var addChallenge: View // floating button add challenge
     private lateinit var focusLocation: View // focus the camera floating button
-    private lateinit var mapFragment: SupportMapFragment
 
     //models
     private lateinit var markers: List<MarkerModel>
     private lateinit var challengeSelected: String
-    private lateinit var currentMarker:MarkerModel
 
     //indicators
     private var clicked = false//allows only one click on the map when adding marker
-    private var markersOnMap = false
+    private var nightMode = false
 
     //const variables
     private val radius = 500.0
     private val defaultZoom = 12f
+
     // Set default value to 18 to represent 6 pm
     val defaultDarkMapHour = 18
 
     //general
     private lateinit var mContext: Context
-    private lateinit var userID:String
+    private lateinit var userID: String
 
     //drawer navigation
     lateinit var drawerLayout: DrawerLayout
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
 
-    //allows to make a collection of markers with smoother view
-    //private lateinit var clusterManager: ClusterManager<MyItem>
 
     private val CHANNEL_ID = "com.example.push_notification_channel"
     private val NOTIFICATION_ID = 123
 
     //clusterManager to manage the markers
-
+    //allows to make a collection of markers with smoother view
     private lateinit var clusterManager: ClusterManager<MarkerItem>
 
 
@@ -120,7 +121,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         //deleteMarkers()
-        if(firebaseAuth.currentUser == null){
+        if (firebaseAuth.currentUser == null) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
@@ -142,29 +143,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
          drawer and back button to close drawer */
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout,
+        actionBarDrawerToggle = ActionBarDrawerToggle(
+            this, drawerLayout,
             R.string.nav_open,
             R.string.nav_close
         )
         //add banner with user data
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val bannerLayout = inflater.inflate(R.layout.map_banner_layout, null)
-        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         params.gravity = Gravity.TOP
         bannerLayout.layoutParams = params
         val userFullName: TextView = bannerLayout.findViewById(R.id.user_name)
         val userScore: TextView = bannerLayout.findViewById(R.id.user_score)
-        val userImage:CircleImageView = bannerLayout.findViewById(R.id.map_user_profile_image)
-        mapController.getUser(userID){ user ->
-            if(user != null){
-                userFullName.text = user.firstName + " " +  user.lastName
-                userScore.text = "Score: "+ user.personalScore.toString()
-                if(user.imageUrl.isNullOrEmpty()) {
+        val userImage: CircleImageView = bannerLayout.findViewById(R.id.map_user_profile_image)
+        mapController.getUser(userID) { user ->
+            if (user != null) {
+                userFullName.text = user.firstName + " " + user.lastName
+                userScore.text = "Score: " + user.personalScore.toString()
+                if (user.imageUrl.isNullOrEmpty()) {
                     Glide.with(applicationContext)
                         .load(R.drawable.ic_defalut_profile_image)
                         .into(userImage)
-                }
-                else{
+                } else {
                     Glide.with(applicationContext)
                         .load(user.imageUrl)
                         .into(userImage)
@@ -187,7 +191,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         //load markers from database
         markers = mapController.getMarkers()
-       // mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        // mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+
+        dbRef.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                addMarkersToCluster(snapshot)
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                // handle marker changes
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                // handle marker removals
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                // handle marker movements
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // handle error
+            }
+        })
+
+
 
         //save device last location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -200,13 +228,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                permissionCode
+            )
             return
         }
         fusedLocationProviderClient.lastLocation
@@ -262,7 +288,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         val locationRequest = LocationRequest().apply {
             interval = 1000
             fastestInterval = 500
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = if (isAppInForeground()) {
+                LocationRequest.PRIORITY_HIGH_ACCURACY
+            } else {
+                LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+            }
         }
 
         fusedLocationProviderClient.requestLocationUpdates(
@@ -286,7 +316,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                         val currLatLng =  LatLng(currentLocation.latitude,currentLocation.longitude)
                         val markerLatLng = LatLng(marker.lat!!,marker.long!!)
                         val distance = mapController.calculateDistance(currLatLng, markerLatLng)
-//                        val isNotificationSent = sentNotifications.getOrDefault(marker.marker_id!!,false)
                         if (distance < 500 && !isNotificationSent) {
                             preferences.edit().putBoolean(marker.marker_id!!, true).apply()
                             sendPushNotification(marker.chall_name!!)
@@ -298,9 +327,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         }
     }
 
+    private fun isAppInForeground(): Boolean {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appProcesses = activityManager.runningAppProcesses ?: return false
+
+        return appProcesses.any { it.processName == packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND }
+    }
+
+    /**
+     * The app is not in the background anymore , get the most accurate location as possible
+     */
+    override fun onResume() {
+        super.onResume()
+        getUserCurrentLocation()
+    }
+
+    /**
+     * The app is in the background , change to PRIORITY_BALANCED_POWER_ACCURACY to save battery
+     * also take less updates of the user location
+     */
+    override fun onPause() {
+        super.onPause()
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
     private fun sendPushNotification(challengeName: String) {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_person)
+            .setSmallIcon(R.drawable.notification_bell)
             .setContentTitle("New Challenge Available")
             .setContentText("You are close to a challenge: $challengeName")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -356,13 +409,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         //if the time is after 6 pm change to night style map
         val currentTime = Calendar.getInstance().time
         val currentHour = currentTime.hours
-        Log.i("TheCurrentTimeIs","Current Time $currentTime , the currentHour is $currentHour")
-        if(currentHour > defaultDarkMapHour) {
+        if(currentHour >= defaultDarkMapHour) {
+            nightMode = true
             // Load the map style JSON file
             val mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
                 this, R.raw.map_style
             )
             mMap.setMapStyle(mapStyleOptions)
+            //change the floating action button color and the banner color
+        }
+        else{
+            nightMode = false
         }
 
         getUserCurrentLocation()
@@ -372,16 +429,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         // Get the current location of the device and set the position of the map.
 
         val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
-        val markerOptions = MarkerOptions().position(latLng).title("My location!")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinicon))
-
+        val markerOptions = MarkerOptions().position(latLng)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder))
         //set map camera focus on the user location
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
         val markerTag = UUID.randomUUID().toString()
         myLocationMarker = mMap.addMarker(markerOptions)!!
         myLocationMarker.tag = markerTag
-        myLocationMarker.showInfoWindow()
+        //myLocationMarker.showInfoWindow()
 
 //        //cluster
          clusterManager = ClusterManager(mContext, mMap)
@@ -485,6 +541,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     private fun setDialog(marker: MarkerModel?) {
         markerPopUp = Dialog(this)
+        markerPopUp.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         markerPopUp.setContentView(R.layout.marker_popup)
         val btnCloseDialog = markerPopUp.findViewById<TextView>(R.id.closePopup)
         val btnStartChallenge = markerPopUp.findViewById<Button>(R.id.marker_start)
@@ -492,14 +549,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         val topScore = markerPopUp.findViewById<TextView>(R.id.challenge_topScore)
         val challengeName = markerPopUp.findViewById<TextView>(R.id.challenge_name)
         val userScore = markerPopUp.findViewById<TextView>(R.id.challenge_userScore)
+        var userTopScore = 0
+        var challengeTopScore = 0
 
         if (marker != null) {
             description.text = marker.chall_description
-            topScore.text = "Best score: " + marker.top_score.toString()
+            mapController.getChallengeTopScores(marker.marker_id,object : Callback {
+                override fun onSuccess(score: Int) {
+                    topScore.text = "Best score: " + score
+                    challengeTopScore = score
+                }
+
+            })
             challengeName.text = marker.chall_name
             mapController.getUserScoreForChallenge(marker.marker_id,userID , object : Callback {
                 override fun onSuccess(score: Int) {
                     userScore.text = "Your Score: " + score
+                    userTopScore = score
                 }
             })
         }
@@ -508,7 +574,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             markerPopUp.dismiss()
         }
         btnStartChallenge.setOnClickListener {
-            startChallenge(marker)
+            if (marker != null) {
+                startChallenge(marker.chall_name,marker.marker_id,challengeTopScore,userTopScore)
+            }
+            markerPopUp.dismiss()
         }
         markerPopUp.show()
     }
@@ -519,47 +588,70 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
      * This method start new Challenge activity depend on each Challenge
      */
 
-    private fun startChallenge(marker: MarkerModel?) {
-        if (marker != null) {
+    private fun startChallenge(challengeName:String?,markerId:String?,challengeTopScore : Int? , userTopScore: Int?) {
+        if (challengeName != null && markerId != null) {
             val intent: Intent
+            val requestCode = 111 // request code for the results of the challenge
 
 
-            when (marker.chall_name) {
+            when (challengeName) {
                 "Guess the flag" -> {
                     intent = Intent(this, FlagChallenge::class.java)
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    //startActivity(intent)
+                    startActivityForResult(intent,requestCode)
                 }
                 "Calculator" -> {
                     intent = Intent(this, MathChallenge::class.java)
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    startActivityForResult(intent,requestCode)
                 }
                 "Clicker" -> {
                     intent = Intent(this, ButtonChallenge::class.java)
-                    Log.i("markertee2", "the value is :$marker.marker_id")
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    Log.i("markertee2", "the value is :$markerId")
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    startActivityForResult(intent,requestCode)
                 }
                 "Guess The City" -> {
                     intent = Intent(this, GussTheCityChallenge::class.java)
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    startActivityForResult(intent,requestCode)
                 }
                 "Logo Challenge" -> {
                     intent = Intent(this, LogoChallenge::class.java)
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    startActivityForResult(intent,requestCode)
                 }
                 "Tap The Number" -> {
                     intent = Intent(this, TapTheNumChallenge::class.java)
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    startActivityForResult(intent,requestCode)
                 }
                 "Destination" -> {
                     intent = Intent(this, DestinationsChallenge::class.java)
-                    intent.putExtra("MARKER_ID",marker.marker_id)
-                    startActivity(intent)
+                    intent.putExtra("MARKER_ID",markerId)
+                    intent.putExtra("TOP_SCORES",challengeTopScore)
+                    intent.putExtra("USER_TOP_SCORE",userTopScore)
+                    intent.putExtra("CHALL_NAME",challengeName)
+                    startActivityForResult(intent,requestCode)
                 }
                 else -> {
                     Log.e("challenge", "Filed loading a challenge")
@@ -569,6 +661,85 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             }
 
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.i("onActivityResult", "requestCode: $requestCode, resultCode: $resultCode")
+
+        if (requestCode == 111 && resultCode == RESULT_OK) { // modify the request code to match the one used above
+            Log.i("onActivityResultsCodeIs","The reulsts code is $resultCode")
+            val score = data?.getIntExtra("SCORE", 0) ?: 0 // retrieve the score from the intent data
+            val markerId = data?.getStringExtra("MARKER_ID")
+            val challengeName = data?.getStringExtra("CHALL_NAME")
+            val oldChallengeTopScore = data?.getIntExtra("OLD_CH_TOP_SCORE",0) ?: 0
+            val oldUserTopScore = data?.getIntExtra("OLD_USER_TOP_SCORE",0) ?: 0
+            showPerformanceDialog(score,markerId,challengeName,oldUserTopScore,oldChallengeTopScore) // display the performance dialog with the user's score
+        }
+    }
+
+    private fun showPerformanceDialog(currScore: Int,markerId : String?,challengeName:String?,oldUserTopScore : Int , oldChallengeTopScore:Int) {
+        val performanceDialog = Dialog(this)
+        performanceDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        performanceDialog.setContentView(R.layout.performance_popup)
+        val btnCloseDialog = performanceDialog.findViewById<TextView>(R.id.p_close)
+        val topScores = performanceDialog.findViewById<TextView>(R.id.p_top_scores)
+        val userTopScores = performanceDialog.findViewById<TextView>(R.id.p_user_top_score)
+        val userCurrentScore = performanceDialog.findViewById<TextView>(R.id.p_user_score)
+        val btnTryAgain = performanceDialog.findViewById<Button>(R.id.p_again)
+        val btnOk = performanceDialog.findViewById<Button>(R.id.p_ok)
+        val description = performanceDialog.findViewById<TextView>(R.id.p_description)
+        var breakTopScores = false
+        userCurrentScore.text = "Your Score: $currScore"
+        var newChallTopScore = oldChallengeTopScore
+        var newUserTopScore = oldUserTopScore
+
+        mapController.getUserScoreForChallenge(markerId,userID , object : Callback {
+            override fun onSuccess(score: Int) {
+                Log.i("userTopScore", "the user top score in this challenge is : $score")
+                userTopScores.text = "Your Top score: $score"
+            }
+        })
+
+        mapController.getChallengeTopScores(markerId,object : Callback {
+            override fun onSuccess(score: Int) {
+                Log.i("challengetopscore", "the challenge top score in this challenge is : $score the marker id is : $markerId")
+                topScores.text = "Top score: $score"
+            }
+
+        })
+
+        if(currScore > oldChallengeTopScore){
+            description.text = getString(R.string.p_beat_top_scores)
+            newUserTopScore = currScore
+            newChallTopScore = currScore
+            Log.i("whatText", "we are here1 : $currScore , the old ch top scores is : $oldChallengeTopScore")
+
+        }
+        else if(currScore > oldUserTopScore ){
+            description.text = getString(R.string.p_beat_user_scores)
+            newUserTopScore = currScore
+            Log.i("whatText", "we are here2 : $currScore")
+        }
+        else{
+            Log.i("whatText", "we are here3 : $currScore")
+            description.text = getString(R.string.p_bad_scores)
+        }
+
+        btnCloseDialog.setOnClickListener {
+            performanceDialog.dismiss()
+        }
+        btnOk.setOnClickListener {
+            performanceDialog.dismiss()
+        }
+        btnTryAgain.setOnClickListener {
+            Log.i("TRY AGAIN","visited")
+            performanceDialog.dismiss()
+            startChallenge(challengeName,markerId,newChallTopScore,newUserTopScore)
+
+        }
+
+        performanceDialog.show()
     }
 
     /**
@@ -603,67 +774,53 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
      */
     private fun setAddChallengeDialog(markerTag: String, markerLocation: LatLng) {
         addMarkerPupUp = Dialog(mContext)
+        addMarkerPupUp.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         addMarkerPupUp.setCancelable(false)
         addMarkerPupUp.setContentView(R.layout.add_marker_popup)
         val btnCloseDialog = addMarkerPupUp.findViewById<TextView>(R.id.closePopup)
         val btnSetChallenge = addMarkerPupUp.findViewById<Button>(R.id.set_challenge)
 
         val challenges = resources.getStringArray(R.array.challenges)
-        val spinner = addMarkerPupUp.findViewById<Spinner>(R.id.challenge_spinner)
+        val spinner = addMarkerPupUp.findViewById<PowerSpinnerView>(R.id.challenge_spinner)
         if (spinner != null) {
-            val adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item, challenges
-            )
-            spinner.adapter = adapter
-            spinner.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View, position: Int, id: Long
-                ) {
-                    challengeSelected = challenges[position]
-                    //wait for the user to click "select"
-                    btnSetChallenge.setOnClickListener {
-                        val currMarkerTag = UUID.randomUUID().toString()
-                        val markerIconID = getMarkerIcon(challengeSelected)
-                        val challengeDescription = getDescription(challengeSelected)
-//                        val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
-//                            BitmapDescriptorFactory.fromResource(markerIconID)
-//                        ))!!
-//                        currMarker.tag = currMarkerTag
-                        val markerToAdd = MarkerModel(currMarkerTag,
-                            challengeSelected,
-                            challengeDescription,
-                            markerLocation.latitude,
-                            markerLocation.longitude,
-                            0,
-                            Date().time
-                        )
-                        addItems(markerToAdd)
-                        Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
-                        //add to database
-                        mapController.addMarker(
-                            currMarkerTag,
-                            challengeSelected,
-                            challengeDescription,
-                            markerLocation.latitude,
-                            markerLocation.longitude,
-                            0,
-                            Date().time
-                        )
-                        updateMarkersOnTheList()
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(markerLocation))
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerLocation, 15.0f))
-
-                        addMarkerPupUp.dismiss()
-                        refreshView()
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    Toast.makeText(mContext, "Please choose challenge ", Toast.LENGTH_SHORT).show()
-                }
+            spinner.setItems(challenges.toList())
+            spinner.setOnSpinnerItemSelectedListener<String> { _, _, index, _ ->
+                challengeSelected = challenges[index]
+            }
+            btnSetChallenge.setOnClickListener {
+                val currMarkerTag = UUID.randomUUID().toString()
+                val markerIconID = getMarkerIcon(challengeSelected)
+                val challengeDescription = getDescription(challengeSelected)
+                // val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
+                // BitmapDescriptorFactory.fromResource(markerIconID)
+                // ))!!
+                // currMarker.tag = currMarkerTag
+                val markerToAdd = MarkerModel(
+                    currMarkerTag,
+                    challengeSelected,
+                    challengeDescription,
+                    markerLocation.latitude,
+                    markerLocation.longitude,
+                    0,
+                    Date().time
+                )
+               // addItems(markerToAdd)
+                Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
+                // add to database
+                mapController.addMarker(
+                    currMarkerTag,
+                    challengeSelected,
+                    challengeDescription,
+                    markerLocation.latitude,
+                    markerLocation.longitude,
+                    0,
+                    Date().time
+                )
+                updateMarkersOnTheList()
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(markerLocation))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerLocation, 15.0f))
+                addMarkerPupUp.dismiss()
+               // refreshView()
             }
             btnCloseDialog.setOnClickListener {
                 addMarkerPupUp.dismiss()
@@ -772,35 +929,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         startActivity(intent)
         finish()
     }
-    //Deletes all the markers after a week
-//    fun deleteMarkers(){
-//        val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
-//        val markerListener = object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    for (empSnap in dataSnapshot.children) {
-//                        val markerData = empSnap.getValue(MarkerModel::class.java)
-//                        val marker_id= markerData?.marker_id
-//                        val now = Calendar.getInstance().timeInMillis
-//                        val expiry = markerData?.time_to_live
-//                        val elapsed = now - expiry!!
-//                        val week = 24 * 60 * 60 * 1000 * 7
-//                        val markerRef=dbRef.child("$marker_id")
-//                        if(markerData!=null && elapsed> week){
-//                            markerRef.removeValue()
-//
-//                        }
-//                    }
-//                }
-//            }
-//
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-//            }
-//        }
-//
-//        dbRef.addValueEventListener(markerListener)
-//    }
+
+
+    private fun addMarkersToCluster(snapshot: DataSnapshot) {
+        if (!::clusterManager.isInitialized) {
+            // clusterManager has not been initialized yet, so we can't add any markers
+            return
+        }
+        val marker = snapshot.getValue(MarkerModel::class.java)
+        if (marker != null) {
+            Log.i("dbListener", "the value is :$marker")
+
+            // Create a cluster item for the marker
+            val infoWindowItem = MarkerItem(marker.lat as Double, marker.long as Double,marker.marker_id as String, marker.chall_name as String
+                ,marker.chall_description as  String)
+
+            // Add the cluster item (marker) to the cluster manager.
+            clusterManager.addItem(infoWindowItem)
+            clusterManager.cluster()
+        }
+    }
 
 
 }

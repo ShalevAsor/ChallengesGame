@@ -1,6 +1,7 @@
 package com.example.myapp.View
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -58,12 +59,21 @@ class LogoChallenge : AppCompatActivity() {
             override fun onFinish() {
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 val markerId = intent.getStringExtra("MARKER_ID")
+                val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
+                val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
+                val challName = intent.getStringExtra("CHALL_NAME")
                 if(markerId != null && userId != null ) {
                     challengeController.updateAllScores(userId, markerId.toString(), counterForRightAnswers)
                 }
                 println("Time is up with $counterForRightAnswers points")
                 val intent = Intent(this@LogoChallenge, MapsActivity::class.java)
-                startActivity(intent)
+                intent.putExtra("SCORE",counterForRightAnswers)
+                intent.putExtra("MARKER_ID",markerId)
+                intent.putExtra("CHALL_NAME",challName)
+                intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
+                intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
+                setResult(Activity.RESULT_OK,intent)
+                finish()
             }
         }
         timer.start() // starting the timer

@@ -1,6 +1,7 @@
 package com.example.myapp.View
 
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -39,16 +40,22 @@ class ButtonChallenge : AppCompatActivity() {
             override fun onFinish() {
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 val markerId = intent.getStringExtra("MARKER_ID")
+                val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
+                val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
+                val challName = intent.getStringExtra("CHALL_NAME")
                 if(markerId != null && userId != null ) {
                     challengeController.updateAllScores(userId, markerId.toString(), counter)
                     challengeController.updateBillboard(userId,counter)
                 }
-                //val markerID = intent.extras?.getString("markerID")
-                //val markerTopScore = intent.extras?.getInt("markerTopScore")
-                //Log.i("markerID",markerID as String)
+
                 println("Time is up with $counter points")
                 val intent = Intent(this@ButtonChallenge, MapsActivity::class.java)
-                startActivity(intent)
+                intent.putExtra("SCORE",counter)
+                intent.putExtra("MARKER_ID",markerId)
+                intent.putExtra("CHALL_NAME",challName)
+                intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
+                intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
+                setResult(Activity.RESULT_OK,intent)
                 finish()
             }
         }

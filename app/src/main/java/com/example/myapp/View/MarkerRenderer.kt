@@ -14,7 +14,6 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 
 class MarkerRenderer(
-
     context: Context,
     map: GoogleMap,
     clusterManager: ClusterManager<MarkerItem>
