@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="@drawable/appbackground_65_nature_outdoors"
     android:padding="16dp">
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_corner_background"
         android:text="Confirm Checkpoint"
         android:textSize="18sp" />
 

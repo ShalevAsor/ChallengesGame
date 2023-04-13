@@ -19,6 +19,7 @@ class MathChallenge : AppCompatActivity() {
     private lateinit var challengeController: ChallengeController
     private lateinit var button1: Button
     private lateinit var button2: Button
+    private lateinit var timer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,7 @@ class MathChallenge : AppCompatActivity() {
         var time_in_sec = 15
 
         // Create the countdown timer
-        val timer = object : CountDownTimer(15000, 1000) {
+        timer = object : CountDownTimer(15000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 LOG.info("$time_in_sec sec")
 
@@ -80,13 +81,19 @@ class MathChallenge : AppCompatActivity() {
         // Start the countdown timer
         timer.start()
 
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+            timer.cancel()
+            finish()
+        }
+
         // Start the game
         game()
     }
 
     override fun onBackPressed() {
-        // Disable going back in the middle of a challenge
-        LOG.info("Can not go back in a middle of a challenge")
+        timer.cancel()
+        finish()
     }
 
     private fun game() {
