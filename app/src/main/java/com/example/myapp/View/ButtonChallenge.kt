@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import com.example.myapp.Controller.ChallengeController
 import com.example.myapp.R
@@ -18,6 +19,7 @@ class ButtonChallenge : AppCompatActivity() {
     private lateinit var scoreView: TextView
     private val LOG = Logger.getLogger(this.javaClass.name)
     private lateinit var challengeController: ChallengeController
+    private lateinit var timer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +29,7 @@ class ButtonChallenge : AppCompatActivity() {
         challengeController = ChallengeController(this)
 
         var time_in_sec=10;
-        val timer = object: CountDownTimer(10000, 1000) {
+        timer = object: CountDownTimer(10000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 println("$time_in_sec sec")
 
@@ -61,10 +63,17 @@ class ButtonChallenge : AppCompatActivity() {
         }
         timer.start() // starting the timer
 
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+            timer.cancel()
+            finish()
+        }
+
     }
 
     override fun onBackPressed() {
-        LOG.info("Can not go back in a middle of a challenge")
+        timer.cancel()
+        finish()
     }
 
     fun clickCounter(view: View) {

@@ -22,6 +22,7 @@ class TapTheNumChallenge : AppCompatActivity() {
     private val LOG = Logger.getLogger(this.javaClass.name)
     private lateinit var scoreView: TextView
     private lateinit var challengeController: ChallengeController
+    private lateinit var timer: CountDownTimer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
@@ -30,7 +31,7 @@ class TapTheNumChallenge : AppCompatActivity() {
         var time_in_sec=20;
         scoreView = findViewById(R.id.theScore)
 
-        val timer = object: CountDownTimer(20000, 1000) {
+        timer = object: CountDownTimer(20000, 1000) {
             @SuppressLint("WrongViewCast")
             override fun onTick(millisUntilFinished: Long) {
                 println("$time_in_sec sec")
@@ -73,10 +74,18 @@ class TapTheNumChallenge : AppCompatActivity() {
         for (b in buttons_list) {
             change_button_to_random_location(displayMetrics, b)
         }
+
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+            timer.cancel()
+            finish()
+        }
+
     }
 
     override fun onBackPressed() {
-        LOG.info("Can not go back in a middle of a challenge")
+        timer.cancel()
+        finish()
     }
 
     // this method change
@@ -88,7 +97,7 @@ class TapTheNumChallenge : AppCompatActivity() {
 
             do {
                 dx = R.nextFloat() * (displayMetrics.widthPixels - 300)
-                dy = R.nextFloat() * (displayMetrics.heightPixels - 300)
+                dy = R.nextFloat() * (displayMetrics.heightPixels - 500)
             } while (!is_far_enough(dx, dy))
 
             button.animate()

@@ -27,7 +27,9 @@ class FlagChallenge : AppCompatActivity() {
     private lateinit var buttons: Array<Button>
     private lateinit var imageView: ImageView
     private lateinit var challengeController: ChallengeController
+    private lateinit var timer: CountDownTimer
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()?.hide()
@@ -44,7 +46,7 @@ class FlagChallenge : AppCompatActivity() {
         imageView = findViewById<ImageView>(R.id.imageView)
 
         var time_in_sec=15;
-        val timer = object: CountDownTimer(15000, 1000) {
+        timer = object: CountDownTimer(15000, 1000) {
             @SuppressLint("WrongViewCast")
             override fun onTick(millisUntilFinished: Long) {
                 LOG.info("$time_in_sec sec")
@@ -77,11 +79,18 @@ class FlagChallenge : AppCompatActivity() {
         }
         timer.start() // starting the timer
 
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+            timer.cancel()
+            finish()
+        }
+
         game() // starting the game
     }
 
     override fun onBackPressed() {
-        LOG.info("Can not go back in a middle of a challenge")
+        timer.cancel()
+        finish()
     }
 
     private fun game() {

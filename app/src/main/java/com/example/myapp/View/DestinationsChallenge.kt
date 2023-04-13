@@ -70,6 +70,17 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
 
         timerTextView = findViewById(R.id.timer_text_view)
         scoreView = findViewById(R.id.score_view)
+
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+            timer?.cancel()
+            finish()
+        }
+    }
+
+    override fun onBackPressed() {
+        timer?.cancel()
+        finish()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -133,8 +144,6 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
                 .title("New Marker")
 
             specialMarker = mMap.addMarker(newMarkerOptions)!!
-
-
 
             //adding listener to the markers
             mMap.setOnMarkerClickListener { marker ->

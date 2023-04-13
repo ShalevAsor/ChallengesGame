@@ -30,6 +30,7 @@ class GussTheCityChallenge : AppCompatActivity() {
     private lateinit var buttons: Array<Button>
     private lateinit var imageView: ImageView
     private lateinit var challengeController: ChallengeController
+    private lateinit var timer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +52,7 @@ class GussTheCityChallenge : AppCompatActivity() {
         imageView = findViewById<ImageView>(R.id.theimageView)
 
         // Set up timer
-        val timer = object: CountDownTimer(15000, 1000) {
+        timer = object: CountDownTimer(15000, 1000) {
 
             var timeInSeconds = 15
 
@@ -89,12 +90,19 @@ class GussTheCityChallenge : AppCompatActivity() {
         }
         timer.start() // Start the timer
 
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        cancelButton.setOnClickListener {
+            timer.cancel()
+            finish()
+        }
+
         // Start the game
         game()
     }
 
     override fun onBackPressed() {
-        LOG.info("Can not go back in a middle of a challenge")
+        timer.cancel()
+        finish()
     }
 
 
@@ -193,6 +201,7 @@ class GussTheCityChallenge : AppCompatActivity() {
         button4.setOnClickListener {
             handleAnswer(rightButton, 4)
         }
+
     }
 
     /**
