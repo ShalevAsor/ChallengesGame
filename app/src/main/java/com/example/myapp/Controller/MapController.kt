@@ -145,5 +145,50 @@ class MapController(private val view: MapsActivity) {
             }
         })
     }
+    /**
+     * This method return false if the user has less than 50 points to open a challenge
+     * @param userId the unique identifier of the user
+     */
+    fun enoughPoints(userId: String, callback: (Boolean) -> Unit) {
+        val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                if (user != null) {
+                    if(user.personalScore!! < 50){
+                        callback(false)
+                        return
+                    }
+                }
+                callback(true)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("userCallback", "Failed to userCallback.", error.toException())
+                callback(false)
+            }
+        })
+    }
+    /**
+     * This method allows the user to pay 50 points to open a challenge near them
+     * @param userId the unique identifier of the user
+     */
+    fun payForChallenge(userId: String) {
+        val database = FirebaseDatabase.getInstance()
+        val reference = database.getReference("Users").child(userId)
+
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val currentScore = dataSnapshot.child("personalScore").value.toString().toLong()
+                    reference.child("personalScore").setValue(currentScore -50)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
 
 }

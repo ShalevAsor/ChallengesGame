@@ -43,7 +43,29 @@ class SplashScreen : AppCompatActivity() {
         }, 2000) //2 sec in milli seconds
     }
 
+//After a challenge is deleted, the number of players that played that challenge will be added to the creator of the challenge
+    fun addAfterDelete(marker_id:String){
+        val markerRef2=FirebaseDatabase.getInstance().getReference("Markers/$marker_id/user_scores")
+        markerRef2.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if(dataSnapshot.exists()){
+                    var temp=dataSnapshot.children.count()
+                    //HERE I NEED TO ADD IT TO THE CREATOR OF THE GAME
+                }
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+
+
+        })
+
+    }
+
     fun deleteMarkers(){
+
         val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         val markerListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -57,6 +79,9 @@ class SplashScreen : AppCompatActivity() {
                         val week = 24 * 60 * 60 * 1000 * 7
                         val markerRef=dbRef.child("$marker_id")
                         if(markerData!=null && elapsed> week){
+                            if (marker_id != null) {
+                                addAfterDelete(marker_id)
+                            }
                             markerRef.removeValue()
 
                         }

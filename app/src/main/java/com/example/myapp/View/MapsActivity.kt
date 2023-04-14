@@ -5,7 +5,6 @@ import android.app.ActivityManager
 import android.app.Dialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -25,7 +24,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.myapp.Controller.MapController
 import com.example.myapp.DestinationsChallenge
@@ -48,7 +46,6 @@ import java.util.*
 import com.example.myapp.Model.Callback
 import com.example.myapp.Model.MarkerItem
 import com.example.myapp.R
-import com.google.maps.android.clustering.ClusterItem
 import com.skydoves.powerspinner.PowerSpinnerView
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -187,7 +184,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         // to make the Navigation drawer icon always appear on the action bar
         supportActionBar?.title = "Challenges Game"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
 
         //load markers from database
         markers = mapController.getMarkers()
@@ -361,6 +357,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             .build()
 
         val notificationManager = NotificationManagerCompat.from(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
     private fun createNotificationChannel() {
@@ -788,40 +812,90 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 challengeSelected = challenges[index]
             }
             btnSetChallenge.setOnClickListener {
-                val currMarkerTag = UUID.randomUUID().toString()
-                val markerIconID = getMarkerIcon(challengeSelected)
-                val challengeDescription = getDescription(challengeSelected)
-                // val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
-                // BitmapDescriptorFactory.fromResource(markerIconID)
-                // ))!!
-                // currMarker.tag = currMarkerTag
-                val markerToAdd = MarkerModel(
-                    currMarkerTag,
-                    challengeSelected,
-                    challengeDescription,
-                    markerLocation.latitude,
-                    markerLocation.longitude,
-                    0,
-                    Date().time
-                )
-               // addItems(markerToAdd)
-                Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
-                // add to database
-                mapController.addMarker(
-                    currMarkerTag,
-                    challengeSelected,
-                    challengeDescription,
-                    markerLocation.latitude,
-                    markerLocation.longitude,
-                    0,
-                    Date().time
-                )
+                //checks if the user has enought points to open a challenge
+                var flag=true
+               // mapController.enoughPoints(userID)
+                mapController.enoughPoints(userID) { hasEnoughPoints ->
+                    if (hasEnoughPoints) {
+                        // User has enough points, proceed with the logic here
+                        val currMarkerTag = UUID.randomUUID().toString()
+                        val markerIconID = getMarkerIcon(challengeSelected)
+                        val challengeDescription = getDescription(challengeSelected)
+                        // val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
+                        // BitmapDescriptorFactory.fromResource(markerIconID)
+                        // ))!!
+                        // currMarker.tag = currMarkerTag
+                        val markerToAdd = MarkerModel(
+                            currMarkerTag,
+                            challengeSelected,
+                            challengeDescription,
+                            markerLocation.latitude,
+                            markerLocation.longitude,
+                            0,
+                            Date().time
+                        )
+                        // addItems(markerToAdd)
+                        Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
+                        // add to database
+                        mapController.addMarker(
+                            currMarkerTag,
+                            challengeSelected,
+                            challengeDescription,
+                            markerLocation.latitude,
+                            markerLocation.longitude,
+                            0,
+                            Date().time
+                        )
+                        mapController.payForChallenge(userID)
+                    } else {
+                        // User does not have enough points, show an error message or take appropriate action
+                        Toast.makeText(mContext, "To open a challenge you need 50 points!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+//                Log.e("flag", "the message is $flag")
+//                if(flag){
+//                    val currMarkerTag = UUID.randomUUID().toString()
+//                    val markerIconID = getMarkerIcon(challengeSelected)
+//                    val challengeDescription = getDescription(challengeSelected)
+//                    // val currMarker = mMap.addMarker(MarkerOptions().position(markerLocation).icon(
+//                    // BitmapDescriptorFactory.fromResource(markerIconID)
+//                    // ))!!
+//                    // currMarker.tag = currMarkerTag
+//                    val markerToAdd = MarkerModel(
+//                        currMarkerTag,
+//                        challengeSelected,
+//                        challengeDescription,
+//                        markerLocation.latitude,
+//                        markerLocation.longitude,
+//                        0,
+//                        Date().time
+//                    )
+//                    // addItems(markerToAdd)
+//                    Toast.makeText(mContext, "Success ", Toast.LENGTH_SHORT).show()
+//                    // add to database
+//                    mapController.addMarker(
+//                        currMarkerTag,
+//                        challengeSelected,
+//                        challengeDescription,
+//                        markerLocation.latitude,
+//                        markerLocation.longitude,
+//                        0,
+//                        Date().time
+//                    )
+//                    mapController.payForChallenge(userID)
+//                }
+//                else{
+//                    Toast.makeText(mContext, "To open a challenge you need 50 points!", Toast.LENGTH_SHORT).show()
+//                }
+
+
                 updateMarkersOnTheList()
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(markerLocation))
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerLocation, 15.0f))
                 addMarkerPupUp.dismiss()
-               // refreshView()
-            }
+                // refreshView()
+
+        }
             btnCloseDialog.setOnClickListener {
                 addMarkerPupUp.dismiss()
             }

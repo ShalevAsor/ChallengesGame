@@ -1,6 +1,8 @@
 package com.example.myapp.Controller
 
 import android.app.Activity
+import android.util.Log
+import com.example.myapp.Model.UserModel
 import com.google.firebase.database.*
 
 /**
@@ -125,6 +127,7 @@ class ChallengeController(private val view: Activity) {
             }
         })
     }
+
 
     /**
      * Method updateAllScores updates the personal score, marker score, and marker top score of a user in Firebase Database.
