@@ -1,9 +1,7 @@
 package com.example.myapp.View
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
@@ -19,9 +17,8 @@ import java.util.logging.Logger
 
 class GussTheCityChallenge : AppCompatActivity() {
     private val LOG = Logger.getLogger(this.javaClass.name)
-
     private var counterForRightAnswers = 0
-
+    private var gameNum=0
     private lateinit var scoreView: TextView
     private lateinit var button1: Button
     private lateinit var button2: Button
@@ -51,45 +48,6 @@ class GussTheCityChallenge : AppCompatActivity() {
         buttons = arrayOf(button1, button2, button3, button4)
         imageView = findViewById<ImageView>(R.id.theimageView)
 
-        // Set up timer
-        timer = object: CountDownTimer(15000, 1000) {
-
-            var timeInSeconds = 15
-
-            override fun onTick(millisUntilFinished: Long) {
-
-                // Update time view
-                val timeView: TextView = findViewById(R.id.thetimeView) as TextView
-                timeView.text = "Time left: $timeInSeconds"
-
-                timeInSeconds--
-            }
-
-            override fun onFinish() {
-
-                // Update score in database
-                val userId = FirebaseAuth.getInstance().currentUser?.uid
-                val markerId = intent.getStringExtra("MARKER_ID")
-                val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
-                val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
-                val challName = intent.getStringExtra("CHALL_NAME")
-                if(markerId != null && userId != null ) {
-                    challengeController.updateAllScores(userId, markerId.toString(), counterForRightAnswers)
-                }
-
-                // Navigate to MapsActivity
-                val intent = Intent(this@GussTheCityChallenge, MapsActivity::class.java)
-                intent.putExtra("SCORE",counterForRightAnswers)
-                intent.putExtra("MARKER_ID",markerId)
-                intent.putExtra("CHALL_NAME",challName)
-                intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
-                intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
-                setResult(Activity.RESULT_OK,intent)
-                finish()
-            }
-        }
-        timer.start() // Start the timer
-
         val cancelButton = findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener {
             timer.cancel()
@@ -105,8 +63,33 @@ class GussTheCityChallenge : AppCompatActivity() {
         finish()
     }
 
-
     private fun game() {
+        if (gameNum>7){
+            end_game()
+            return
+        }
+
+        // Set up timer
+        timer = object: CountDownTimer(10000, 1000) {
+
+            var timeInSeconds = 10
+
+            override fun onTick(millisUntilFinished: Long) {
+
+                // Update time view
+                val timeView: TextView = findViewById(R.id.thetimeView) as TextView
+                timeView.text = "Time left: $timeInSeconds"
+
+                timeInSeconds--
+            }
+
+            override fun onFinish() {
+                gameNum++
+                game()
+            }
+        }
+        timer.start() // Start the timer
+
         // Initialize variables
         val citiesList = ArrayList<Int>()
         val citiesArr = resources.obtainTypedArray(R.array.cities)
@@ -204,6 +187,28 @@ class GussTheCityChallenge : AppCompatActivity() {
 
     }
 
+    private fun end_game() {
+        // Update score in database
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val markerId = intent.getStringExtra("MARKER_ID")
+        val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
+        val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
+        val challName = intent.getStringExtra("CHALL_NAME")
+        if(markerId != null && userId != null ) {
+            challengeController.updateAllScores(userId, markerId.toString(), counterForRightAnswers)
+        }
+
+        // Navigate to MapsActivity
+        val intent = Intent(this@GussTheCityChallenge, MapsActivity::class.java)
+        intent.putExtra("SCORE",counterForRightAnswers)
+        intent.putExtra("MARKER_ID",markerId)
+        intent.putExtra("CHALL_NAME",challName)
+        intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
+        intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
+        setResult(Activity.RESULT_OK,intent)
+        finish()
+    }
+
     /**
      * A helper function to handle the user's answer.
      *
@@ -216,6 +221,8 @@ class GussTheCityChallenge : AppCompatActivity() {
         rightButton: Int,
         currButtonNum: Int
     ) {
+        timer.cancel()
+        gameNum++
         disableButtons() // disable the buttons to prevent multiple clicks
         val originalButtonColor = button1.background // get the original color of the clicked button
 
@@ -226,7 +233,7 @@ class GussTheCityChallenge : AppCompatActivity() {
         changeButtonsColor(rightButton)
 
         // create a timer to reset the buttons and start a new game
-        val timer = object : CountDownTimer(500, 100) {
+        val timer_button = object : CountDownTimer(500, 100) {
             override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {
@@ -239,7 +246,7 @@ class GussTheCityChallenge : AppCompatActivity() {
                 game() // start a new game
             }
         }
-        timer.start()
+        timer_button.start()
     }
 
     private fun changeButtonsColor(rightButton: Int) {
