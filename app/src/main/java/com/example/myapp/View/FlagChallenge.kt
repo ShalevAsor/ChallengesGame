@@ -3,13 +3,12 @@ package com.example.myapp.View
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.myapp.Controller.ChallengeController
 import com.example.myapp.R
@@ -18,6 +17,7 @@ import java.util.logging.Logger
 
 class FlagChallenge : AppCompatActivity() {
     private var counterForRightAnswers=0
+    private var gameNum=0
     private val LOG = Logger.getLogger(this.javaClass.name)
     private lateinit var scoreView: TextView
     private lateinit var button1: Button
@@ -45,40 +45,6 @@ class FlagChallenge : AppCompatActivity() {
         buttons = arrayOf(button1, button2, button3, button4)
         imageView = findViewById<ImageView>(R.id.imageView)
 
-        var time_in_sec=15;
-        timer = object: CountDownTimer(15000, 1000) {
-            @SuppressLint("WrongViewCast")
-            override fun onTick(millisUntilFinished: Long) {
-                LOG.info("$time_in_sec sec")
-
-                val timeView: TextView = findViewById(R.id.timeView) as TextView
-                timeView.text="Time left: $time_in_sec"
-
-                time_in_sec--
-            }
-
-            override fun onFinish() {
-                val userId = FirebaseAuth.getInstance().currentUser?.uid
-                val markerId = intent.getStringExtra("MARKER_ID")
-                val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
-                val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
-                val challName = intent.getStringExtra("CHALL_NAME")
-                if(markerId != null && userId != null ) {
-                    challengeController.updateAllScores(userId, markerId.toString(), counterForRightAnswers)
-                }
-                LOG.info("Time is up with $counterForRightAnswers points")
-                val intent = Intent(this@FlagChallenge, MapsActivity::class.java)
-                intent.putExtra("SCORE",counterForRightAnswers)
-                intent.putExtra("MARKER_ID",markerId)
-                intent.putExtra("CHALL_NAME",challName)
-                intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
-                intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
-                setResult(Activity.RESULT_OK,intent)
-                finish()
-            }
-        }
-        timer.start() // starting the timer
-
         val cancelButton = findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener {
             timer.cancel()
@@ -94,6 +60,30 @@ class FlagChallenge : AppCompatActivity() {
     }
 
     private fun game() {
+        if(gameNum>7) {
+            finishGame()
+            return
+        }
+
+        var time_in_sec=10;
+        timer = object: CountDownTimer(10000, 1000) {
+            @SuppressLint("WrongViewCast")
+            override fun onTick(millisUntilFinished: Long) {
+                LOG.info("$time_in_sec sec")
+
+                val timeView: TextView = findViewById(R.id.timeView) as TextView
+                timeView.text="Time left: $time_in_sec"
+
+                time_in_sec--
+            }
+
+            override fun onFinish() {
+                gameNum++
+                game()
+            }
+        }
+        timer.start() // starting the timer
+
         var flagNum:Int
         var fakeFlagNum1:Int
         var fakeFlagNum2:Int
@@ -188,6 +178,27 @@ class FlagChallenge : AppCompatActivity() {
         }
     }
 
+    private fun finishGame() {
+        timer.cancel()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val markerId = intent.getStringExtra("MARKER_ID")
+        val oldChTopScore = intent.getIntExtra("TOP_SCORES", 0)
+        val oldUserTopScore = intent.getIntExtra("USER_TOP_SCORE",0)
+        val challName = intent.getStringExtra("CHALL_NAME")
+        if(markerId != null && userId != null ) {
+            challengeController.updateAllScores(userId, markerId.toString(), counterForRightAnswers)
+        }
+        LOG.info("Time is up with $counterForRightAnswers points")
+        val intent = Intent(this@FlagChallenge, MapsActivity::class.java)
+        intent.putExtra("SCORE",counterForRightAnswers)
+        intent.putExtra("MARKER_ID",markerId)
+        intent.putExtra("CHALL_NAME",challName)
+        intent.putExtra("OLD_CH_TOP_SCORE",oldChTopScore)
+        intent.putExtra("OLD_USER_TOP_SCORE",oldUserTopScore)
+        setResult(Activity.RESULT_OK,intent)
+        finish()
+    }
+
     /**
      * A helper function to handle the user's answer.
      *
@@ -200,6 +211,8 @@ class FlagChallenge : AppCompatActivity() {
         rightButton: Int,
         currButtonNum: Int
     ) {
+        gameNum++
+        timer.cancel()
         disableButtons() // disable the buttons to prevent multiple clicks
         val originalButtonColor = button1.background // get the original color of the clicked button
 
@@ -210,7 +223,7 @@ class FlagChallenge : AppCompatActivity() {
         changeButtonsColor(rightButton)
 
         // create a timer to reset the buttons and start a new game
-        val timer = object : CountDownTimer(500, 100) {
+        val timer_button = object : CountDownTimer(500, 100) {
             override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {
@@ -223,7 +236,7 @@ class FlagChallenge : AppCompatActivity() {
                 game() // start a new game
             }
         }
-        timer.start()
+        timer_button.start()
     }
 
     private fun changeButtonsColor(rightButton: Int) {
