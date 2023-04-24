@@ -60,6 +60,7 @@ class UserProfileActivity : AppCompatActivity() {
         val editLastName:EditText = findViewById(R.id.user_profile_last_name_edit)
         val editBtn:ImageView = findViewById(R.id.ic_edit_profile_1)
         val saveBtn:Button = findViewById(R.id.user_profile_save_btn)
+        val statsBtn:Button = findViewById(R.id.user_profile_stats_btn)
         val uploadImageBtn = findViewById<ImageView>(R.id.ic_edit_profile_upload_picture)
         editEmail.visibility = View.GONE
         editFirstName.visibility = View.GONE
@@ -91,6 +92,10 @@ class UserProfileActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+        statsBtn.setOnClickListener {
+            val intent = Intent(this@UserProfileActivity, UserStatsActivity::class.java)
+            startActivity(intent)
         }
         editBtn.setOnClickListener{
             //set edit variables visibility

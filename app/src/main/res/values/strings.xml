@@ -103,7 +103,24 @@
     <string name="user_profile_last_name">Last Name</string>
     <string name="user_profile_history">History</string>
     <string name="user_profile_save">Save</string>
+    <string name="user_profile_stats">Stats</string>
     <string name="user_profile_language">Language</string>
+
+
+    <!-- Strings user stats -->
+    <string name="user_stats_title">My Stats</string>
+    <string name="user_stats_challenges_played">Challenges Played:</string>
+    <string name="user_stats_rank">Rank:</string>
+    <string name="user_stats_basic_stats">Basic Stats:</string>
+    <string name="user_stats_time_played">Time played Today:</string>
+    <string name="user_stats_challenges_created">Challenges Created:</string>
+    <string name="user_stats_points">Points:</string>
+    <string name="user_stats_challenges">Challenges Stats</string>
+    <string name="user_stats_challenges_top_scores">Current Top Scores:</string>
+    <string name="user_stats_challenges_top_percent">Top Percent:</string>
+    <string name="user_stats_challenges_created_points_earned">Points earned:</string>
+    <string name="user_stats_challenges_created_points_spent">Points spent:</string>
+
 
 
 </resources>
