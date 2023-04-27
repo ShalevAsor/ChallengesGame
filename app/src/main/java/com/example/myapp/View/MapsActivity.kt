@@ -76,6 +76,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     private lateinit var addMarkerPupUp: Dialog
     private lateinit var addChallenge: View // floating button add challenge
     private lateinit var focusLocation: View // focus the camera floating button
+    private lateinit var userFullName: TextView
+    private lateinit var userScore: TextView
+    private lateinit var userImage: CircleImageView
 
     //models
     private lateinit var markers: List<MarkerModel>
@@ -154,9 +157,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         )
         params.gravity = Gravity.TOP
         bannerLayout.layoutParams = params
-        val userFullName: TextView = bannerLayout.findViewById(R.id.user_name)
-        val userScore: TextView = bannerLayout.findViewById(R.id.user_score)
-        val userImage: CircleImageView = bannerLayout.findViewById(R.id.map_user_profile_image)
+        userFullName = bannerLayout.findViewById(R.id.user_name)
+        userScore = bannerLayout.findViewById(R.id.user_score)
+        userImage = bannerLayout.findViewById(R.id.map_user_profile_image)
         mapController.getUser(userID) { user ->
             if (user != null) {
                 userFullName.text = user.firstName + " " + user.lastName
@@ -732,6 +735,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             }
 
         })
+
 
         if(currScore > oldChallengeTopScore){
             description.text = getString(R.string.p_beat_top_scores)

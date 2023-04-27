@@ -94,6 +94,20 @@ class MapController(private val view: MapsActivity) {
             markerLatLng.latitude, markerLatLng.longitude, result)
         return result[0].toDouble()
     }
+    fun getUserTotalScore(userId: String, callback: Callback) {
+        val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("personal_Score")
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val score = dataSnapshot.value as? Long
+                callback.onSuccess(score?.toInt() ?: 0)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                callback.onSuccess(0)
+            }
+        })
+
+    }
 
     /**
      * This method retrieves the score of a user for a specific challenge.
@@ -132,11 +146,9 @@ class MapController(private val view: MapsActivity) {
 
     fun getUser(userID: String, userCallback: (user: UserModel?) -> Unit) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userID)
-        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-
                 val user = dataSnapshot.getValue(UserModel::class.java)
-                Log.i("user2IsTHE", "Failed to read value.$user")
                 userCallback(user)
             }
 
