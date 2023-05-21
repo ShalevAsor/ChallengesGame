@@ -115,6 +115,32 @@ class TopScoresController(private val view: TopScores) {
 
                 override fun onCancelled(error: DatabaseError) {}
             })
+    } fun getRank(
+        topScores: MutableList<ScoreModel>,
+        //topScoresAdapter: TopScoresAdapter
+    ) {
+        /* get the data of each score in the Billboard aka top scores */
+        FirebaseDatabase.getInstance().reference.child("Billboard")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    /* if some of the scores has changed then it will update the adapter */
+                    for (dss in snapshot.children) {
+                        val scoreModel: ScoreModel? = dss.getValue(ScoreModel::class.java)
+                        if (scoreModel != null) {
+                            topScores.add(scoreModel)
+                        }
+                    }
+                    topScores.sortByDescending { it.total_score }
+
+//                    if (topScores.size > 3) {
+//                        topScores.subList(0, 3).clear() // Remove the first 3 values from the list
+//                    }
+                   // topScoresAdapter.notifyDataSetChanged()
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 }
 

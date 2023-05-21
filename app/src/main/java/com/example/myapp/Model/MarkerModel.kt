@@ -16,6 +16,7 @@ import com.google.maps.android.clustering.ClusterItem
 data class MarkerModel(
 
     var marker_id:String?= null,
+    var challenge_creator:String?=null,
     var chall_name: String? = null,
     var chall_description:String? = null,
     var lat: Double? = null,

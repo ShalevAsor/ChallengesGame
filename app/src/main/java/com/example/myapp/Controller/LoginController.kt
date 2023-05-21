@@ -23,9 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -45,33 +44,40 @@ import java.util.*
 
 class LoginController(private val activity: LoginActivity, private val binding: ActivityLoginBinding, private val firebaseAuth: FirebaseAuth, private val mGoogleSignInClient: GoogleSignInClient) {
 
+
     /**
      * Initializes the onClickListeners for the buttons in the LoginActivity and requests the location permission.
      */
 
     fun onCreate() {
         requestLocationPermission()
+
     }
+
     /**
      * If a user is already signed in, either with email/password or Google Sign In, updates the UI to the map activity.
      */
 
     fun onStart() {
+
+
         if (firebaseAuth.currentUser != null || GoogleSignIn.getLastSignedInAccount(activity) != null) {
-            updateUI(activity,"map")
+            updateUI(activity, "map")
+
         }
         binding.registerPage.setOnClickListener {
-            updateUI(activity,"register")
+            updateUI(activity, "register")
         }
         binding.btnLogin.setOnClickListener {
             val email = binding.loginEmail.text.toString()
             val pass = binding.loginPass.text.toString()
+
             loginWithEmailAndPassword(email, pass)
         }
         binding.signInButton.setOnClickListener {
             signInWithGoogle()
         }
-        binding.forgotpass.setOnClickListener{
+        binding.forgotpass.setOnClickListener {
             val forgotPassDialog = Dialog(activity)
             forgotPassDialog.setContentView(R.layout.reset_pass_dialog)
             val btnCloseDialog = forgotPassDialog.findViewById<TextView>(R.id.closePopup)
@@ -82,17 +88,30 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             }
 
             btnResetPass.setOnClickListener {
-                val email = forgotPassDialog.findViewById<EditText>(R.id.reset_pass_email).text.toString()
+                val email =
+                    forgotPassDialog.findViewById<EditText>(R.id.reset_pass_email).text.toString()
                 if (email.isEmpty()) {
-                    Toast.makeText(activity, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Please enter a valid email address",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@setOnClickListener
                 }
                 firebaseAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(activity, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                activity,
+                                "Password reset email sent",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            Toast.makeText(activity, "Failed to send password reset email: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                activity,
+                                "Failed to send password reset email: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
 
@@ -100,6 +119,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             forgotPassDialog.show()
         }
     }
+
     /**
      * Handles the result of the Google Sign In activity.
      *
@@ -113,6 +133,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             handleSignInResult(task)
         }
     }
+
     /**
      * Starts the Google Sign In activity.
      */
@@ -120,6 +141,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
         val intent = mGoogleSignInClient.signInIntent
         activity.startActivityForResult(intent, 1)
     }
+
     /**
      * Handles the result of the Google Sign In activity.
      * If the user is already signed in, signs in with email and password.
@@ -139,9 +161,9 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        updateUI(activity,"map")
+                        updateUI(activity, "map")
                     } else {
-                        createUserWithEmailAndPassword(email, password,firstName,lastName)
+                        createUserWithEmailAndPassword(email, password, firstName, lastName)
                     }
                 }
         } catch (e: ApiException) {
@@ -169,6 +191,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             context.startActivity(intent)
         }
     }
+
     /**
      * This method requests the location permission.
      */
@@ -186,6 +209,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             }
         }
     }
+
     /**
      * This method logs in the user with the given email and password.
      *
@@ -196,25 +220,7 @@ class LoginController(private val activity: LoginActivity, private val binding: 
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    updateUI(activity,"map")
-                } else {
-                    Toast.makeText(activity, "Error: ${task.exception?.message}", Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
-    }
-    /**
-     * This method creates a new user with the given email and password.
-     *
-     * @param email The email of the user.
-     * @param password The password of the user.
-     */
-    private fun createUserWithEmailAndPassword(email: String, password: String,firstName: String,lastName: String) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    createUserInDatabase(email,password,firstName,lastName)
-                    updateUI(activity,"map")
+                    updateUI(activity, "map")
                 } else {
                     Toast.makeText(activity, "Error: ${task.exception?.message}", Toast.LENGTH_LONG)
                         .show()
@@ -222,11 +228,43 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             }
     }
 
-    private fun createUserInDatabase(email: String, password: String, firstName: String, lastName: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val fullUser = UserModel(firstName, lastName, email, null, 0, password)
+    /**
+     * This method creates a new user with the given email and password.
+     *
+     * @param email The email of the user.
+     * @param password The password of the user.
+     */
+    private fun createUserWithEmailAndPassword(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String
+    ) {
+
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    createUserInDatabase(email, password, firstName, lastName)
+                    updateUI(activity, "map")
+                } else {
+                    Toast.makeText(activity, "Error: ${task.exception?.message}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+    }
+
+    private fun createUserInDatabase(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String
+    ) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val fullUser = UserModel(firstName, lastName, email, null, 0, password, 0, 0, 0, 0, 0)
+
         val scoreModer = ScoreModel(firstName, 0, null)
         val dbRef_users = FirebaseDatabase.getInstance().getReference("Users")
+        //dbRef_users.child(userId).child("My_Markers").child(userId).setValue(0)
         val dbRef_billboard = FirebaseDatabase.getInstance().getReference("Billboard")
 
         if (userId != null) {
@@ -236,7 +274,30 @@ class LoginController(private val activity: LoginActivity, private val binding: 
     }
 
     private fun generatePassword(length: Int): String {
-        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9') + listOf('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '<', '>', '?', '/')
+        val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9') + listOf(
+            '!',
+            '@',
+            '#',
+            '$',
+            '%',
+            '^',
+            '&',
+            '*',
+            '(',
+            ')',
+            '-',
+            '_',
+            '=',
+            '+',
+            '[',
+            ']',
+            '{',
+            '}',
+            '<',
+            '>',
+            '?',
+            '/'
+        )
         val random = Random()
         return (1..length)
             .map { random.nextInt(charPool.size) }
@@ -259,4 +320,53 @@ class LoginController(private val activity: LoginActivity, private val binding: 
             }
         })
     }
+
+//    fun getGameTimer(userId: String, callback: CallBack2) {
+//        val ref = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+//
+//        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val score = dataSnapshot.getValue(UserModel::class.java)
+//                var temp: Long = 0
+//                if (score != null) {
+//                    temp = score.timePlayed!!
+//                }
+//                //  val score = dataSnapshot.value as? Long
+//                // val scoreModel = scoreSnapshot.getValue(ScoreModel::class.java)
+//                callback.onSuccess(temp ?: 0)
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                callback.onSuccess(0)
+//            }
+//        })
+//
+//
+//    }
+//    fun updateTotalTimer(userId: String, elapsedTime: Long) {
+//        val database = FirebaseDatabase.getInstance()
+//        val reference = database.getReference("Users").child(userId).child("timePlayedToday")
+//
+//        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//
+//                    val currentScore = 0
+//
+//                    reference.setValue(elapsedTime)
+//                    if(currentScore==0){
+//                        reference.setValue(elapsedTime)
+//                    }
+//                } else {
+//                    reference.setValue(elapsedTime)
+//                }
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                // Handle error
+//            }
+//        })
+//    }
 }
+
+

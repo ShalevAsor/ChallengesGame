@@ -74,9 +74,61 @@ class MapController(private val view: MapsActivity) {
     ) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val marker = MarkerModel(markerTag, challengeName, challengeDescription, lat, long, topScore, timeToLive)
+        val marker = MarkerModel(markerTag,userId,challengeName, challengeDescription, lat, long, topScore, timeToLive)
         dbRef.child(markerTag).setValue(marker)
         dbRef.child(markerTag).child("user_scores").child(userId).setValue(0)
+        //adding 1 to games created in user table
+        val dbRef2 = FirebaseDatabase.getInstance()
+        val reference=dbRef2.getReference("Users").child(userId)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                if (user!=null) {
+                    val challengesCreated=user.challengesCreated
+                    reference.child("challengesCreated").setValue(challengesCreated!!+1)
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+
+    }
+    fun addMarkerAdmin(
+        markerTag: String,
+        challengeName: String,
+        challengeDescription: String,
+        lat: Double,
+        long: Double,
+        topScore: Int,
+        timeToLive: Long
+    ) {
+        val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
+       // val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val userId = "Admin"
+        val marker = MarkerModel(markerTag,userId,challengeName, challengeDescription, lat, long, topScore, timeToLive)
+        dbRef.child(markerTag).setValue(marker)
+        dbRef.child(markerTag).child("user_scores").child(userId).setValue(0)
+        //adding 1 to games created in user table
+        val dbRef2 = FirebaseDatabase.getInstance()
+        val reference=dbRef2.getReference("Users").child(userId)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                if (user!=null) {
+                    val challengesCreated=user.challengesCreated
+                    reference.child("challengesCreated").setValue(challengesCreated!!+1)
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+
     }
 
     /**
@@ -143,6 +195,7 @@ class MapController(private val view: MapsActivity) {
             }
         })
     }
+
     /**
      * This method return false if the user has less than 50 points to open a challenge
      * @param userId the unique identifier of the user
@@ -179,7 +232,9 @@ class MapController(private val view: MapsActivity) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     val currentScore = dataSnapshot.child("personalScore").value.toString().toLong()
+                    val spentPoints = dataSnapshot.child("pointSpent").value.toString().toLong()
                     reference.child("personalScore").setValue(currentScore -50)
+                    reference.child("pointSpent").setValue(spentPoints +50)
                 }
             }
 
