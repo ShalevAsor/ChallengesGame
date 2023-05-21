@@ -24,6 +24,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var loginController: LoginController
+    //Game Timer
+//    private var startTime: Long = 0
+//    private var timer: Timer? = null
+//    private var elapsedTime: Long = 0
+//    private lateinit var userId: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build())
         loginController = LoginController(this, binding, firebaseAuth, mGoogleSignInClient)
         loginController.onCreate()
+
     }
 
     override fun onStart() {
@@ -40,8 +47,10 @@ class LoginActivity : AppCompatActivity() {
         loginController.onStart()
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         loginController.onActivityResult(requestCode, resultCode, data)
     }
+
 }

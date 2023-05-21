@@ -28,6 +28,7 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         deleteMarkers()
+//        deleteMarkersNow()
 
         // This is used to hide the status bar and make
         window.setFlags(
@@ -44,25 +45,7 @@ class SplashScreen : AppCompatActivity() {
     }
 
 //After a challenge is deleted, the number of players that played that challenge will be added to the creator of the challenge
-    fun addAfterDelete(marker_id:String){
-        val markerRef2=FirebaseDatabase.getInstance().getReference("Markers/$marker_id/user_scores")
-        markerRef2.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if(dataSnapshot.exists()){
-                    var temp=dataSnapshot.children.count()
-                    //HERE I NEED TO ADD IT TO THE CREATOR OF THE GAME
-                }
 
-            }
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-
-
-        })
-
-    }
 
     fun deleteMarkers(){
 
@@ -80,8 +63,34 @@ class SplashScreen : AppCompatActivity() {
                         val markerRef=dbRef.child("$marker_id")
                         if(markerData!=null && elapsed> week){
                             if (marker_id != null) {
-                                addAfterDelete(marker_id)
+                                //addAfterDelete(marker_id)
                             }
+                            markerRef.removeValue()
+
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        dbRef.addValueEventListener(markerListener)
+    }
+    fun deleteMarkersNow(){
+
+        val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
+        val markerListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (empSnap in dataSnapshot.children) {
+                        val markerData = empSnap.getValue(MarkerModel::class.java)
+                        val marker_id= markerData?.marker_id
+                        val markerRef=dbRef.child("$marker_id")
+                        if(markerData!=null){
+
                             markerRef.removeValue()
 
                         }

@@ -53,14 +53,63 @@ class ChallengeController(private val view: Activity) {
     fun updateUserPersonalScore(userId: String, newScore: Int) {
         val database = FirebaseDatabase.getInstance()
         val reference = database.getReference("Users").child(userId)
-
+        Log.e("flag123", "i am outside")
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
+
+                    val challengePlayed=dataSnapshot.child("challengesPlayed").value.toString().toInt()
                     val currentScore = dataSnapshot.child("personalScore").value.toString().toLong()
+                    val currentEarnedPoints = dataSnapshot.child("pointsEarned").value.toString().toLong()
+                    //Each time a game ends the value of challenges played by the user will add up by 1
+                    //Each time a game ends the value of earned points will add up by the new score
+
+//
+                    reference.child("challengesPlayed").setValue(challengePlayed + 1)
                     reference.child("personalScore").setValue(currentScore + newScore)
+                    reference.child("pointsEarned").setValue(currentEarnedPoints + newScore)
                 } else {
                     reference.child("personalScore").setValue(newScore)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
+    /**
+     * Method updateCreatorScore updates the creator of the  challenge by 1 for each player that played the game.
+     *
+     * @param userId the unique identifier of the user
+     * @param newScore the score to be added to the personal score of the user
+     */
+
+    fun updateCreatorScore(markerId: String) {
+        val database = FirebaseDatabase.getInstance()
+        val markersReference = database.getReference("Markers").child(markerId)
+        val usersReference = database.getReference("Users")
+
+        markersReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val creatorId = dataSnapshot.child("challenge_creator").getValue(String::class.java)
+                    creatorId?.let { id ->
+                        usersReference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.exists()) {
+                                    val userTotalScore = snapshot.child("personalScore").getValue(Int::class.java) ?: 0
+                                    val updatedScore = userTotalScore + 1
+                                    usersReference.child(id).child("personalScore").setValue(updatedScore)
+                                    updateBillboard(id, 1)
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle error
+                            }
+                        })
+                    }
                 }
             }
 
@@ -138,6 +187,7 @@ class ChallengeController(private val view: Activity) {
      */
 
     fun updateAllScores(userId: String,markerId: String,score: Int ){
+        updateCreatorScore(markerId)
         updateUserPersonalScore(userId,score)
         updateMarkerScore(markerId,userId,score)
         updateMarkerTopScore(markerId,score)
