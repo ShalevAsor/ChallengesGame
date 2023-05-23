@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -27,7 +28,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -48,6 +55,8 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var specialMarker: Marker
     private var hasDoublePoints = 0
     private var circles = arrayListOf<Circle>()
+    private var playerIsOnBike: Boolean = false
+    private var isDialogShowing: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +65,16 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
         challengeController = ChallengeController(this)
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -76,16 +93,98 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
             timer?.cancel()
             finish()
         }
+
+        locationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                if (isDialogShowing) return
+                location?.let {
+                    var speed = it.speed * 3.6 // convert from m/s to km/h
+                    if (speed > 28) {
+                        isDialogShowing = true
+                        var alertDialog = AlertDialog.Builder(this@DestinationsChallenge)
+                            .setTitle("Game Rules Violation")
+                            .setMessage("Sorry, you can't play this challenge in a car.")
+                            .setPositiveButton("Exit Game") { _, _ ->
+                                timer?.cancel()
+                                finish()
+                            }
+                            .setOnDismissListener {
+                                isDialogShowing = false
+                            }
+                            .setCancelable(false)
+                            .show()
+                        val window = alertDialog.window
+                        window?.setBackgroundDrawable(ColorDrawable(Color.rgb(111,145,240)))
+                    } else if (speed in 15.0..28.0) {
+                        if (!playerIsOnBike) {
+                            playerIsOnBike = true
+                            isDialogShowing = true
+                            var alertDialog = AlertDialog.Builder(this@DestinationsChallenge)
+                                .setTitle("Game Difficulty Adjustment")
+                                .setMessage("Looks like you riding on bike or scooter, in order to keep playing Regenerate the game.")
+                                .setPositiveButton("Regenerate") { _, _ -> regenerateGameWithFarMarkers() }
+                                .setNegativeButton("Exit Game") { _, _ ->
+                                    timer?.cancel()
+                                    finish()
+                                }
+                                .setOnDismissListener {
+                                    isDialogShowing = false
+                                }
+                                .setCancelable(false)
+                                .show()
+                            val window = alertDialog.window
+                            window?.setBackgroundDrawable(ColorDrawable(Color.rgb(111,145,240)))
+                        } else {
+
+                        }
+                    } else {
+                        playerIsOnBike = false
+                    }
+                }
+            }
+
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+        }
     }
 
-    override fun onBackPressed() {
-        timer?.cancel()
-        finish()
+    private fun addMarkers(location: Location?, radiusInKm: Int, checkPointBitmap: BitmapDescriptor) {
+        for (i in 1..3) {
+            var point: LatLng? =
+                location?.let { getLocation(it.latitude, location.longitude, radiusInKm) }
+            var theMarker: Marker? =
+                point?.let { MarkerOptions().position(it).icon(checkPointBitmap).title("Point") }
+                    ?.let { mMap.addMarker(it) }
+
+            if (theMarker != null) {
+                val circleOptions = CircleOptions()
+                    .center(theMarker.position)
+                    .radius(50.0)
+                    .strokeWidth(2f)
+                    .strokeColor(Color.BLUE)
+                    .fillColor(Color.argb(50, 0, 0, 255))
+
+                markers.add(theMarker)
+                val circle = mMap.addCircle(circleOptions)
+                circles.add(circle)
+            }
+        }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+    // This function will regenerate the game with markers placed further apart
+    private fun regenerateGameWithFarMarkers() {
+        timer?.cancel() // Stop the current game
+        for (marker in markers){
+            marker.remove()
+        }
+        for(circle in circles){
+            circle.remove()
+        }
+        specialMarker.remove()
+        markers.clear()
+        startGame(400) // Start a new game
+    }
 
+    private fun startGame(radiusInKm: Int) {
         // Start the timer
         timeLeft = 300000
         startTimer()
@@ -109,25 +208,7 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
 
                 // Add the predetermined points to the points array
                 if (markers.size==0) {
-                    for (i in 1..3) {
-                        var point: LatLng? = getLocation(location.latitude, location.longitude, 200)
-                        var theMarker: Marker? =
-                            point?.let { MarkerOptions().position(it).icon(checkPointBitmap).title("Point") }
-                                ?.let { mMap.addMarker(it) }
-
-                        if (theMarker != null) {
-                            val circleOptions = CircleOptions()
-                                .center(theMarker.position)
-                                .radius(50.0)
-                                .strokeWidth(2f)
-                                .strokeColor(Color.BLUE)
-                                .fillColor(Color.argb(50, 0, 0, 255))
-
-                            markers.add(theMarker)
-                            val circle = mMap.addCircle(circleOptions)
-                            circles.add(circle)
-                        }
-                    }
+                    addMarkers(location,radiusInKm, checkPointBitmap)
                 }
             }
 
@@ -166,26 +247,36 @@ class DestinationsChallenge : AppCompatActivity(), OnMapReadyCallback {
 
                         if (marker == specialMarker) handleSpecialMarker(marker)
                         else{
-                        val dialog = AlertDialog.Builder(this)
-                        val dialogView = layoutInflater.inflate(R.layout.custom_dialog, null)
+                            val dialog = AlertDialog.Builder(this)
+                            val dialogView = layoutInflater.inflate(R.layout.custom_dialog, null)
 
-                        dialog.setView(dialogView)
-                        val customDialog = dialog.create()
-                        customDialog.show()
+                            dialog.setView(dialogView)
+                            val customDialog = dialog.create()
+                            customDialog.show()
 
-                        dialogView.findViewById<Button>(R.id.start_button).setOnClickListener {
-                            customDialog.dismiss()
+                            dialogView.findViewById<Button>(R.id.start_button).setOnClickListener {
+                                customDialog.dismiss()
 
-                            val intent =
-                                Intent(this@DestinationsChallenge, JumpActivity::class.java)
-                            jumpActivityResult.launch(intent)
+                                val intent =
+                                    Intent(this@DestinationsChallenge, JumpActivity::class.java)
+                                jumpActivityResult.launch(intent)
+                            }
                         }
                     }
-                }
                 }
                 true
             }
         }
+    }
+
+    override fun onBackPressed() {
+        timer?.cancel()
+        finish()
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        startGame(200)
     }
 
     private fun handleSpecialMarker(marker: Marker) {
