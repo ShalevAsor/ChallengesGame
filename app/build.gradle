@@ -5,24 +5,26 @@ plugins {
 }
 
 android {
-    namespace 'com.example.myapp'
+    namespace 'com.geochamp.myapp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.myapp"
-        minSdk 27
-        targetSdk 32
-        versionCode 1
+        applicationId "com.geochamp.myapp"
+        minSdk 28
+        targetSdk 33
+        versionCode 4
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -37,11 +39,15 @@ android {
     }
 }
 
+
 dependencies {
+
+
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.gms:google-services:4.3.14'
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
@@ -57,13 +63,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    androidTestImplementation 'androidx.test:rules:1.5.0'
 
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth-ktx'
 
     // Also add the dependency for the Google Play services library and specify its version
-    implementation 'com.google.android.gms:play-services-auth:20.4.0'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'androidx.fragment:fragment:1.5.5'
 
     //card view
@@ -82,7 +89,18 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.6'
     implementation "com.github.skydoves:powerspinner:1.2.5"
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
 
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+
+
+    // splash screen
 
 
 

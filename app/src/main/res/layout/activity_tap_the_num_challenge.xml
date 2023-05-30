@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/appbackground_65_nature_outdoors"
@@ -38,55 +40,62 @@
 
     </LinearLayout>
 
-    <AbsoluteLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/absoluteLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <Button
             android:id="@+id/b1"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="0dp"
-            android:layout_y="0dp"
             android:background="@drawable/rounded_corner_background"
             android:text="1" />
 
         <Button
             android:id="@+id/b2"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="0dp"
-            android:layout_y="0dp"
             android:background="@drawable/rounded_corner_background"
             android:text="2" />
 
         <Button
             android:id="@+id/b3"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="0dp"
-            android:layout_y="0dp"
             android:background="@drawable/rounded_corner_background"
             android:text="3" />
 
         <Button
             android:id="@+id/b4"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="0dp"
-            android:layout_y="0dp"
             android:background="@drawable/rounded_corner_background"
             android:text="4" />
 
         <Button
             android:id="@+id/b5"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="0dp"
-            android:layout_y="0dp"
             android:background="@drawable/rounded_corner_background"
             android:text="5" />
 
-    </AbsoluteLayout>
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_cancel_button"
+            android:fontFamily="sans-serif-medium"
+            android:text="Cancel"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.993"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

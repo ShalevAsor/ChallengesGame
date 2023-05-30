@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.geochamp.myapp">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -10,7 +11,6 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -24,13 +24,22 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".View.UserStatsActivity"
+            android:label="@string/app_title"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".View.JumpActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".View.UserProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait"
+            android:label="@string/app_title"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
             <meta-data
                 android:name="android.app.lib_name"
@@ -40,6 +49,7 @@
             android:name=".View.TopScores"
             android:exported="false"
             android:screenOrientation="portrait"
+            android:label="@string/app_title"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
             <meta-data
                 android:name="android.app.lib_name"
@@ -68,7 +78,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".DestinationsChallenge"
+            android:name=".View.DestinationsChallenge"
             android:exported="false"
             android:screenOrientation="portrait">
             <meta-data
@@ -126,9 +136,10 @@
         <activity
             android:name=".View.MapsActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps"
+            android:label="@string/app_title"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".View.RegisterActivity"

@@ -1,20 +1,45 @@
 {
   "project_info": {
     "project_number": "582562711320",
+    "firebase_url": "https://myapp-8e8bc-default-rtdb.firebaseio.com",
     "project_id": "myapp-8e8bc",
     "storage_bucket": "myapp-8e8bc.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:582562711320:android:ea18772270523f455d406d",
+        "mobilesdk_app_id": "1:582562711320:android:4e31144074b090525d406d",
         "android_client_info": {
-          "package_name": "com.example.myapp"
+          "package_name": "com.geochamp.myapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "582562711320-m57imlgkjsi0nkls4l4tvmk4b62vb7tg.apps.googleusercontent.com",
+          "client_id": "582562711320-02b0o8c3esn0rhmca9ab6dlnhlv128qo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geochamp.myapp",
+            "certificate_hash": "7bbea05182668c84fe8f303391f0cf4e33d250c3"
+          }
+        },
+        {
+          "client_id": "582562711320-jl6btjo1rr38kh0h4vb3t8e8ptlb4irc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geochamp.myapp",
+            "certificate_hash": "f49dfe77fa45591231826e75e317b58c6fe7a457"
+          }
+        },
+        {
+          "client_id": "582562711320-tu1ra21gb68r8nu9f58c3thl2ghvkrqi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geochamp.myapp",
+            "certificate_hash": "2e3196d597899003c82c6e4940d0ce69f0cceb04"
+          }
+        },
+        {
+          "client_id": "582562711320-du4ogj931qaj428alnfukmfkcsmpf06p.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +52,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "582562711320-m57imlgkjsi0nkls4l4tvmk4b62vb7tg.apps.googleusercontent.com",
+              "client_id": "582562711320-040fb2vhl8rbinle0mac1q6su06occ5v.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

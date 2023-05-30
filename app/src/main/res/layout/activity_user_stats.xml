@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.UserProfileActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layouts_main_container"
+        android:background="#FFADE8F4"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/user_stats_title"
+            android:layout_width="229dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal|center"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/poppins_bold"
+            android:gravity="center"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="4"
+            android:shadowRadius="4"
+            android:text="@string/user_stats_title"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/basic_stats_title_container"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/basic_stats_arrow"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/right_arrow_3_icon"/>
+
+            <TextView
+                android:id="@+id/user_stats_basic_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/user_stats_basic_stats"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_basic_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFADE8F4"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/line_1"
+            android:layout_width="390dp"
+            android:layout_height="2dp"
+            android:layout_gravity="center"
+            android:background="@drawable/user_profile_line_1_shape" />
+
+
+        <TextView
+            android:id="@+id/user_stats_rank"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_light"
+            android:text="@string/user_stats_rank"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+
+
+        <TextView
+            android:id="@+id/user_stats_challenges_played"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:fontFamily="@font/poppins_light"
+            android:text="@string/user_stats_challenges_played"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+
+
+
+        <TextView
+            android:id="@+id/user_stats_points"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:fontFamily="@font/poppins_light"
+            android:text="@string/user_stats_points"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+
+
+        <View
+            android:id="@+id/line_2"
+            android:layout_width="390dp"
+            android:layout_height="2dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/user_profile_line_2_shape" />
+
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/challenges_stats_container"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/right_arrow_3_icon"/>
+
+            <TextView
+                android:id="@+id/user_stats_challenges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/user_stats_challenges"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_challenges_stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFADE8F4"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/line_3"
+                android:layout_width="390dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center"
+                android:background="@drawable/user_profile_line_1_shape" />
+
+            <TextView
+                android:id="@+id/user_stats_challenges_created"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/user_stats_challenges_created"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/points_earned"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/user_stats_challenges_created_points_earned"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+
+
+
+            <TextView
+                android:id="@+id/points_spent"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="@string/user_stats_challenges_created_points_spent"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+
+            <View
+                android:id="@+id/line_4"
+                android:layout_width="390dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/user_profile_line_2_shape" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

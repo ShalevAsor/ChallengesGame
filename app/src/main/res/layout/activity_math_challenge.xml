@@ -25,27 +25,44 @@
         android:id="@+id/button2"
         android:layout_width="130dp"
         android:layout_height="105dp"
-        android:text="Button"
         android:background="@drawable/rounded_corner_background"
+        android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button1"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.858" />
+        app:layout_constraintVertical_bias="0.808" />
 
     <Button
         android:id="@+id/button1"
         android:layout_width="130dp"
         android:layout_height="105dp"
-        android:text="Button"
         android:background="@drawable/rounded_corner_background"
+        android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/questionTxt"
-        app:layout_constraintVertical_bias="0.779" />
+        app:layout_constraintVertical_bias="0.7" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:background="@drawable/rounded_cancel_button"
+        android:fontFamily="sans-serif-medium"
+        android:text="Cancel"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2"
+        app:layout_constraintVertical_bias="0.5"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/scoreView3"

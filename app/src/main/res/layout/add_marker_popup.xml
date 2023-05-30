@@ -21,8 +21,8 @@
 
 
     <TextView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="end"
         android:background="@drawable/popup_close_circle"
         android:gravity="center"
@@ -66,7 +66,7 @@
         android:layout_marginTop="30dp"
         android:id="@+id/challenge_spinner"
         android:background="@color/white"
-        android:hint="Choose Challenge"
+        android:hint="@string/choose_challenge"
         android:padding="10dp"
         android:textColor="@color/Black"
         android:textColorHint="@color/Black"
@@ -102,6 +102,7 @@
         android:background="@color/white"
         android:text="@string/set_challenge"
         android:textColor="@color/Black"
+        android:contentDescription="@string/set_challenge_description"
         android:textStyle="bold"
         android:textAllCaps="false" />
 

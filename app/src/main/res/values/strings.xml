@@ -1,15 +1,18 @@
 <resources>
-    <string name="app_name">MyApp</string>
+    <string name="app_name">GeoChamp</string>
+
 
     <!-- Strings login -->
     <string name="login_email">Email</string>
     <string name="login_password">Password</string>
     <string name="login_btn">Log In</string>
-    <string name="login_title">The Challenges Game</string>
+    <string name="login_title">Geo Champ</string>
     <string name="login_create_account">New User? SignUp</string>
     <string name="login_forgot_pass">Forgot password?</string>
     <string name="login_reset_pass">Reset your password</string>
     <string name="login_reset_pass_btn">Reset</string>
+    <string name="login_email_hint">Enter your email</string>
+    <string name="login_pass_hint">Enter your password</string>
 
 
     <!-- Strings register -->
@@ -20,7 +23,7 @@
     <string name="register_password">Password</string>
     <string name="register_btn_signup">Sign Up</string>
     <string name="register_login">Have Account? Login</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="app_title">Geo-Champ</string>
 
     <!-- Strings Top scores -->
 
@@ -78,7 +81,7 @@
     <!-- Strings Map -->
     <string name="topScoreBtn">Top Scores</string>
     <string name="or">OR</string>
-    <string name="add_challenge">Add Challenge</string>
+    <string name="add_challenge">Choose desire location on the map to create a new challenge</string>
 
 
     <!-- to toggle the open close button of the navigation drawer -->
@@ -103,7 +106,35 @@
     <string name="user_profile_last_name">Last Name</string>
     <string name="user_profile_history">History</string>
     <string name="user_profile_save">Save</string>
+    <string name="user_profile_stats">Stats</string>
     <string name="user_profile_language">Language</string>
+
+
+    <!-- Strings user stats -->
+    <string name="user_stats_title">My Stats</string>
+    <string name="user_stats_challenges_played">Challenges Played:</string>
+    <string name="user_stats_rank">Rank:</string>
+    <string name="user_stats_basic_stats">Basic Stats:</string>
+    <string name="user_stats_time_played">Time played Today:</string>
+    <string name="user_stats_challenges_created">Challenges Created:</string>
+    <string name="user_stats_points">Points:</string>
+    <string name="user_stats_challenges">Challenges Stats</string>
+    <string name="user_stats_challenges_top_scores">Current Top Scores:</string>
+    <string name="user_stats_challenges_top_percent">Top Percent:</string>
+    <string name="user_stats_challenges_created_points_earned">Points earned:</string>
+    <string name="user_stats_challenges_created_points_spent">Points spent:</string>
+    <string name="first_name_description">First name</string>
+    <string name="last_name_description">Last name</string>
+    <string name="email_description">"email "</string>
+    <string name="password_description">password</string>
+    <string name="signup_description">Sign up</string>
+    <string name="login_description">login</string>
+    <string name="login_title_description">Geo-Champ</string>
+    <string name="reset_password_description">reset password</string>
+    <string name="login_btn_description">Log in</string>
+    <string name="login_google_description">login with google</string>
+    <string name="set_challenge_description">set challenge</string>
+    <string name="choose_challenge">Choose Challenge</string>
 
 
 </resources>

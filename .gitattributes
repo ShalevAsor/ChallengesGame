@@ -1,0 +1,11 @@
+C:/Users/Shalev filter=lfs diff=lfs merge=lfs -text
+C:/Users/Shalev filter=lfs diff=lfs merge=lfs -text
+Asor/AndroidStudioProjects/MyApp/caches/jars-9/868a116e3b799db37f011fd1b10fbdfb/app filter=lfs diff=lfs merge=lfs -text
+C:/Users/Shalev filter=lfs diff=lfs merge=lfs -text
+C:/Users/Shalev filter=lfs diff=lfs merge=lfs -text
+caches/jars-9/868a116e3b799db37f011fd1b10fbdfb/app.jar filter=lfs diff=lfs merge=lfs -text
+caches/jars-9/o_2988ffbb2029651aeab18574de011191/app.jar filter=lfs diff=lfs merge=lfs -text
+gradle/caches/jars-9/o_2988ffbb2029651aeab18574de011191/app.jar filter=lfs diff=lfs merge=lfs -text
+gradle/caches/jars-9/868a116e3b799db37f011fd1b10fbdfb/app.jar filter=lfs diff=lfs merge=lfs -text
+gradle/wrapper/dists/gradle-8.0-bin/ca5e32bp14vu59qr306oxotwh/gradle-8.0-bin.zip filter=lfs diff=lfs merge=lfs -text
+wrapper/dists/gradle-8.0-bin/ca5e32bp14vu59qr306oxotwh/gradle-8.0-bin.zip filter=lfs diff=lfs merge=lfs -text

@@ -41,26 +41,30 @@
 
     <TextView
         android:id="@+id/firstNameTitle"
-        android:layout_width="111dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="170dp"
         android:gravity="top"
         android:text="@string/register_first_name"
-        android:textAppearance="@style/email" />
+        android:textAppearance="@style/email"
+        android:contentDescription="@string/first_name_description"/>
     <EditText
         android:id="@+id/register_fName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="25dp"
-        android:layout_marginTop="215dp"
+        android:layout_marginTop="200dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:paddingTop="10dp"
-        android:textColor="@color/Black" />
+        android:textColor="@color/Black"
+        android:contentDescription="@string/first_name_description"/>/>
     <View
         android:id="@+id/register_fName_background"
         android:layout_width="match_parent"
@@ -71,29 +75,33 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="250dp"
         android:background="@drawable/line"
-        />
+        android:contentDescription="@string/last_name_description"/>/>
     <TextView
         android:id="@+id/lastNameTitle"
-        android:layout_width="111dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="270dp"
+        android:layout_marginTop="255dp"
         android:gravity="top"
         android:text="@string/register_last_name"
-        android:textAppearance="@style/email" />
+        android:textAppearance="@style/email"
+        android:contentDescription="@string/last_name_description"/>/>
     <EditText
         android:id="@+id/registerLName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="25dp"
-        android:layout_marginTop="305dp"
+        android:layout_marginTop="290dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:paddingTop="10dp"
-        android:textColor="@color/Black" />
+        android:textColor="@color/Black"
+        android:contentDescription="@string/last_name_description"/>/>
     <View
         android:id="@+id/register_lName_background"
         android:layout_width="match_parent"
@@ -107,22 +115,25 @@
         />
     <TextView
         android:id="@+id/emailTitle"
-        android:layout_width="111dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="12dp"
         android:layout_marginTop="360dp"
         android:gravity="top"
         android:text="@string/register_email"
+        android:contentDescription="@string/email_description"
         android:textAppearance="@style/email" />
     <EditText
         android:id="@+id/registerEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="25dp"
-        android:layout_marginTop="395dp"
+        android:layout_marginTop="410dp"
         android:ems="10"
         android:inputType="textEmailAddress"
         android:paddingTop="10dp"
@@ -135,29 +146,33 @@
         android:layout_marginEnd="25dp"
         android:layout_marginStart="12dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="430dp"
+        android:layout_marginTop="450dp"
         android:background="@drawable/line"
         />
     <TextView
         android:id="@+id/register_pass_title"
-        android:layout_width="111dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="450dp"
+        android:layout_marginTop="470dp"
         android:gravity="top"
+        android:contentDescription="@string/password_description"
         android:text="@string/register_password"
         android:textAppearance="@style/email" />
     <EditText
         android:id="@+id/registerPass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="25dp"
-        android:layout_marginTop="485dp"
+        android:layout_marginTop="510dp"
         android:ems="10"
         android:inputType="textPassword"
+        android:contentDescription="@string/password_description"
         android:paddingTop="10dp"
         android:textColor="@color/Black" />
     <View
@@ -168,7 +183,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginStart="12dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="520dp"
+        android:layout_marginTop="560dp"
         android:background="@drawable/line"
         />
 
@@ -179,7 +194,8 @@
         android:layout_alignParentStart="true"
         android:layout_gravity="center_horizontal"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="560dp"
+        android:layout_marginTop="590dp"
+        android:contentDescription="@string/signup_description"
         android:text="@string/register_btn_signup"
         android:background="@drawable/rectangle_2"
         android:textAppearance="@style/login"
@@ -192,6 +208,7 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="center_horizontal|bottom"
         android:text="@string/register_login"
+        android:contentDescription="@string/login_description"
         android:textAppearance="@style/new_user_si"
         android:gravity="top"
         />
