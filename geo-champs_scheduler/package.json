@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.31",
+    "uuid": "^9.0.0"
+  }
+}
