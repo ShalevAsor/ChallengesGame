@@ -2,6 +2,7 @@ package com.geochamp.myapp.Controller
 
 import android.app.Activity
 import android.util.Log
+import com.geochamp.myapp.Model.UserModel
 import com.google.firebase.database.*
 
 /**
@@ -49,34 +50,81 @@ class ChallengeController(private val view: Activity) {
      * @param newScore the score to be added to the personal score of the user
      */
 
-    fun updateUserPersonalScore(userId: String, newScore: Int) {
+    fun updateUserPersonalScore(userId: String,markerId: String, newScore: Int) {
         val database = FirebaseDatabase.getInstance()
-        val reference = database.getReference("Users").child(userId)
+        val reference = database.getReference("Users")
+        val markersReference=database.getReference("Markers").child(markerId)
         Log.e("flag123", "i am outside")
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+        markersReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    Log.e("checkbug", "inside!")
+                    val creatorId = dataSnapshot.child("challenge_creator").getValue(String::class.java)
+                    val topScore=dataSnapshot.child("top_score").value.toString().toLong()
+                    Log.e("checkbug", "inside2!")
+                    userId?.let { id ->
+                        reference.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.exists()) {
 
-                    val challengePlayed=dataSnapshot.child("challengesPlayed").value.toString().toInt()
-                    val currentScore = dataSnapshot.child("personalScore").value.toString().toLong()
-                    val currentEarnedPoints = dataSnapshot.child("pointsEarned").value.toString().toLong()
-                    //Each time a game ends the value of challenges played by the user will add up by 1
-                    //Each time a game ends the value of earned points will add up by the new score
+                                    val challengePlayed =snapshot.child("challengesPlayed").value.toString().toInt()
 
-//
-                    reference.child("challengesPlayed").setValue(challengePlayed + 1)
-                    reference.child("personalScore").setValue(currentScore + newScore)
-                    reference.child("pointsEarned").setValue(currentEarnedPoints + newScore)
-                } else {
-                    reference.child("personalScore").setValue(newScore)
+                                    val currentScore =snapshot.child("personalScore").value.toString().toLong()
+                                    val currentEarnedPoints =snapshot.child("pointsEarned").value.toString().toLong()
+
+                                    //Each time a game ends the value of challenges played by the user will add up by 1
+                                    //Each time a game ends the value of earned points will add up by the new score
+
+                                    reference.child(userId).child("challengesPlayed").setValue(challengePlayed + 1)
+                                    reference.child(userId).child("personalScore").setValue(currentScore +0)
+                                    Log.e("checkbug", "before the if")
+                                    if(userId!=creatorId){
+
+                                    }
+                                    if (userId != creatorId) {
+                                        Log.e("simple!", "inside firs if ")
+                                        if (newScore > topScore) {
+                                            reference.child(userId).child("pointsEarned")
+                                                .setValue(currentEarnedPoints + newScore)
+                                            reference.child(userId).child("personalScore").setValue(currentScore + newScore)
+                                            updateBillboard(userId, newScore)
+                                        }
+//                                        else{
+//                                             Log.e("simple!", "inside else")
+//                                             reference.child(userId).child("pointsEarned").setValue(currentEarnedPoints + 1)
+//                                         }
+                                    }
+
+
+                                } else {
+                                    reference.child("personalScore").setValue(newScore)
+                                }
+                            }
+
+
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle error
+                            }
+                        })
+                    }
                 }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 // Handle error
             }
         })
     }
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Method updateCreatorScore updates the creator of the  challenge by 1 for each player that played the game.
      *
@@ -84,7 +132,7 @@ class ChallengeController(private val view: Activity) {
      * @param newScore the score to be added to the personal score of the user
      */
 
-    fun updateCreatorScore(markerId: String) {
+    fun updateCreatorScore(userId: String,markerId: String) {
         val database = FirebaseDatabase.getInstance()
         val markersReference = database.getReference("Markers").child(markerId)
         val usersReference = database.getReference("Users")
@@ -97,10 +145,20 @@ class ChallengeController(private val view: Activity) {
                         usersReference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 if (snapshot.exists()) {
-                                    val userTotalScore = snapshot.child("personalScore").getValue(Int::class.java) ?: 0
-                                    val updatedScore = userTotalScore + 1
-                                    usersReference.child(id).child("personalScore").setValue(updatedScore)
-                                    updateBillboard(id, 1)
+                                    if (userId != id) {
+                                        Log.e("how?", "i am inside")
+                                        val userTotalScore = snapshot.child("personalScore")
+                                            .getValue(Int::class.java) ?: 0
+                                        val userEarnedPts = snapshot.child("pointsEarned")
+                                            .getValue(Int::class.java) ?: 0
+                                        val updatedEarnedPts=userEarnedPts+1
+                                        val updatedScore = userTotalScore + 1
+                                        usersReference.child(id).child("personalScore")
+                                            .setValue(updatedScore)
+                                        usersReference.child(id).child("pointsEarned")
+                                            .setValue(updatedEarnedPts)
+                                        updateBillboard(id, 1)
+                                    }
                                 }
                             }
 
@@ -137,6 +195,7 @@ class ChallengeController(private val view: Activity) {
 
                     if(currentScore<newScore){
                         reference.setValue(newScore)
+
                     }
                 } else {
                     reference.setValue(newScore)
@@ -186,11 +245,11 @@ class ChallengeController(private val view: Activity) {
      */
 
     fun updateAllScores(userId: String,markerId: String,score: Int ){
-        updateCreatorScore(markerId)
-        updateUserPersonalScore(userId,score)
+        updateCreatorScore(userId,markerId)
+        updateUserPersonalScore(userId,markerId,score)
         updateMarkerScore(markerId,userId,score)
         updateMarkerTopScore(markerId,score)
-        updateBillboard(userId,score)
+        //updateBillboard(userId,score)
     }
 
 }

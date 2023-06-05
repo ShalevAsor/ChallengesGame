@@ -63,7 +63,7 @@ class MapController(private val view: MapsActivity) {
      * @param timeToLive: Int, the time limit for the challenge associated with the marker.
      *
      */
-     fun addMarker(
+    fun addMarker(
         markerTag: String,
         challengeName: String,
         challengeDescription: String,
@@ -106,7 +106,7 @@ class MapController(private val view: MapsActivity) {
         timeToLive: Long
     ) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Markers")
-       // val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        // val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val userId = "Admin"
         val marker = MarkerModel(markerTag,userId,challengeName, challengeDescription, lat, long, topScore, timeToLive)
         dbRef.child(markerTag).setValue(marker)
@@ -140,7 +140,7 @@ class MapController(private val view: MapsActivity) {
      * @return Double, distance between the two locations.
      */
 
-     fun calculateDistance(currLatLng: LatLng, markerLatLng: LatLng): Double {
+    fun calculateDistance(currLatLng: LatLng, markerLatLng: LatLng): Double {
         val result = FloatArray(1)
         Location.distanceBetween(currLatLng.latitude, currLatLng.longitude,
             markerLatLng.latitude, markerLatLng.longitude, result)
@@ -154,7 +154,7 @@ class MapController(private val view: MapsActivity) {
      * @param callback callback that returns the score of the user for the challenge
      */
 
-     fun getUserScoreForChallenge(markerId: String?, userId: String, callback: Callback) {
+    fun getUserScoreForChallenge(markerId: String?, userId: String, callback: Callback) {
         val ref = FirebaseDatabase.getInstance().getReference("Markers/$markerId/user_scores/$userId")
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -196,6 +196,7 @@ class MapController(private val view: MapsActivity) {
         })
     }
 
+
     /**
      * This method return false if the user has less than 50 points to open a challenge
      * @param userId the unique identifier of the user
@@ -227,6 +228,8 @@ class MapController(private val view: MapsActivity) {
     fun payForChallenge(userId: String) {
         val database = FirebaseDatabase.getInstance()
         val reference = database.getReference("Users").child(userId)
+        val reference2 = database.getReference("Billboard").child(userId)
+
 
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -235,6 +238,7 @@ class MapController(private val view: MapsActivity) {
                     val spentPoints = dataSnapshot.child("pointSpent").value.toString().toLong()
                     reference.child("personalScore").setValue(currentScore -50)
                     reference.child("pointSpent").setValue(spentPoints +50)
+                    reference2.child("total_score").setValue(currentScore-50)
                 }
             }
 

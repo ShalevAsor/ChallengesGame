@@ -47,7 +47,7 @@ class ButtonChallenge : AppCompatActivity() {
                 val challName = intent.getStringExtra("CHALL_NAME")
                 if(markerId != null && userId != null ) {
                     challengeController.updateAllScores(userId, markerId.toString(), counter)
-                    challengeController.updateBillboard(userId,counter)
+                   // challengeController.updateBillboard(userId,counter)
                 }
 
                 println("Time is up with $counter points")
