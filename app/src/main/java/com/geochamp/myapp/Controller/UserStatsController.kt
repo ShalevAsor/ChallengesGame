@@ -17,27 +17,11 @@ class UserStatsController(private val view: UserStatsActivity) {
         val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userID)
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val userData = dataSnapshot.value as Map<String, Any>?
-                if (userData != null) {
-
-                    val user = UserModel(
-                        userData["firstName"] as String,
-                        userData["lastName"] as String,
-                        userData["userEmail"] as String,
-                        userData["imageUrl"] as String?,
-                        userData["personalScore"] as Long?,
-                        userData["pass"] as String,
-                        userData["challengesCreated"] as Int,
-                        userData["challengesPlayed"] as Int,
-                        userData["pointsEarned"] as Long,
-                        userData["pointSpent"] as Int,
-
-                    )
-                    userCallback(user)
-                } else {
-                    userCallback(null)
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                Log.i("user2IsTHE", "Failed to read value.$user")
+                userCallback(user)
                 }
-            }
+
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("values", "Failed to read value.", error.toException())

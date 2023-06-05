@@ -26,6 +26,8 @@
         <activity
             android:name=".View.UserStatsActivity"
             android:label="@string/app_title"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

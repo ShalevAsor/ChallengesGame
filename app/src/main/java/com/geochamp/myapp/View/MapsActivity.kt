@@ -122,7 +122,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         dbRef = FirebaseDatabase.getInstance().getReference("Markers")
 
 
-        //deleteMarkers()
         if (firebaseAuth.currentUser == null) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -196,14 +195,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         markers = mapController.getMarkers()
         // mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
-
-        mapController.getUser(userID) { user ->
-            if (user != null) {
-                if(user.firstName=="Admin"){
-                    generate500Markers()
-                }
-            }
-        }
 
         dbRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -514,10 +505,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             }
         }
 
-//        addChallenge.setOnClickListener {
-//            Toast.makeText(this, "500 new markers generated ", Toast.LENGTH_LONG).show()
-//            generate500Markers()
-//        }
         focusLocation.setOnClickListener{
             val latLng = LatLng(currentLocation.latitude,currentLocation.longitude)
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
@@ -817,99 +804,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             mMap.addMarker(markerOptions)?.tag = marker.marker_id
         }
     }
-    /**
-     * This method generates 1 random coordinate in Israel
-     */
 
-
-
-    fun generateIsraelLocation(): Pair<Double, Double> {
-        val ISRAEL_MIN_LATITUDE = 29.495
-        val ISRAEL_MAX_LATITUDE = 33.296
-        val ISRAEL_MIN_LONGITUDE = 34.267
-        val ISRAEL_MAX_LONGITUDE = 35.897
-        val maxAttempts = 500 // Maximum number of attempts to generate a location within Israel
-        var attempt = 0
-
-        while (attempt < maxAttempts) {
-            val random = Random()
-            val latitude = ISRAEL_MIN_LATITUDE + random.nextDouble() * (ISRAEL_MAX_LATITUDE - ISRAEL_MIN_LATITUDE)
-            val longitude = ISRAEL_MIN_LONGITUDE + random.nextDouble() * (ISRAEL_MAX_LONGITUDE - ISRAEL_MIN_LONGITUDE)
-            val randomLocation = Pair(latitude, longitude)
-            if (isLocationNotInTheSea(randomLocation.first,randomLocation.second)) {
-                return Pair(latitude, longitude)
-            }
-
-            attempt++
-        }
-
-        throw IllegalStateException("Failed to generate a location within Israel.")
-    }
-    /**
-     * This method checks if the location is in the sea,if true try again!
-     */
-
-
-
-    private fun isLocationNotInTheSea(latitude: Double, longitude: Double): Boolean {
-        val geocoder = Geocoder(this)
-        val randomLocation=Pair(latitude, longitude)
-        val addresses = geocoder.getFromLocation(randomLocation.first, randomLocation.second, 1)
-        if (addresses != null) {
-            if (addresses.isNotEmpty()) {
-                val address = addresses[0]
-
-                // Check if the address contains a sea-related component
-                val isInSea = address.featureName?.contains("Sea", ignoreCase = true) == true ||
-                        address.subLocality?.contains("Sea", ignoreCase = true) == true ||
-                        address.locality?.contains("Sea", ignoreCase = true) == true
-
-                if (!isInSea) {
-                    // Create challenge marker at the random location
-                    val markerOptions = MarkerOptions().position(LatLng(randomLocation.first,randomLocation.second)).title("Challenge")
-                    mMap.addMarker(markerOptions)
-                    return true
-                }
-                return false
-            }
-        }
-        return false;
-    }
-
-
-
-    /**
-     * This method generates 500 random markers in Israel
-     */
-    fun generate500Markers()  {
-        repeat(500) {
-            val currMarkerTag = UUID.randomUUID().toString()
-            val gameTitles = listOf(
-                "Calculator",
-                "Clicker",
-                "Guess The City",
-                "Logo Challenge",
-                "Tap The Number",
-                "Destination"
-            )
-            val randomIndex = (0 until gameTitles.size).random()
-            val challengeSelected = gameTitles[randomIndex]
-            val challengeDescription = getDescription(challengeSelected)
-            val coordinate = generateIsraelLocation()
-            val latitude = coordinate.first
-            val longitude = coordinate.second
-
-            mapController.addMarkerAdmin(
-                currMarkerTag,
-                challengeSelected,
-                challengeDescription,
-                latitude,
-                longitude,
-                0,
-                Date().time
-            )
-        }
-    }
 
     /**
      * This method display the user dialog that allows to choose the specific challenge

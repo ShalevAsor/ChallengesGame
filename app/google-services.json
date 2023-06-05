@@ -15,19 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "582562711320-02b0o8c3esn0rhmca9ab6dlnhlv128qo.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.geochamp.myapp",
-            "certificate_hash": "7bbea05182668c84fe8f303391f0cf4e33d250c3"
-          }
-        },
-        {
           "client_id": "582562711320-jl6btjo1rr38kh0h4vb3t8e8ptlb4irc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.geochamp.myapp",
             "certificate_hash": "f49dfe77fa45591231826e75e317b58c6fe7a457"
+          }
+        },
+        {
+          "client_id": "582562711320-k73rua84mrnua16ltem6di4jlm6rs816.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geochamp.myapp",
+            "certificate_hash": "12eb409f42e0ad11cc86ec6cbb09f5c884fef0df"
           }
         },
         {
