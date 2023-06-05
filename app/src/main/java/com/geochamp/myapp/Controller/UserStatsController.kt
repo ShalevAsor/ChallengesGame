@@ -26,7 +26,12 @@ class UserStatsController(private val view: UserStatsActivity) {
                         userData["userEmail"] as String,
                         userData["imageUrl"] as String?,
                         userData["personalScore"] as Long?,
-                        userData["pass"] as String
+                        userData["pass"] as String,
+                        userData["challengesCreated"] as Int,
+                        userData["challengesPlayed"] as Int,
+                        userData["pointsEarned"] as Long,
+                        userData["pointSpent"] as Int,
+
                     )
                     userCallback(user)
                 } else {
