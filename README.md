@@ -1,6 +1,6 @@
 # Geo-Champ
 
-![Geo-Champ Logo](assets/logo.png) <!-- Update with your image path -->
+![Geo-Champ Logo](ic_launcher_foreground.png) <!-- Update with your image path -->
 
 **Geo-Champ** is an exhilarating Android game app that combines geography, knowledge, and speed challenges into one thrilling experience. Test your skills, explore the world, and climb the global leaderboards with this unique app!
 
