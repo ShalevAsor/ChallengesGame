@@ -27,7 +27,7 @@
 
 ## 🌐 Connect with Us
 
-- **Website:** [My Website]([link-to-website](https://shalevasor.github.io/))
+- **Website:** [My Website](https://shalevasor.github.io/)
 - **Contact:** [shalevasor@gmail.com](mailto:shalevasor@gmail.com)
 - **Connect with me on LinkedIn:** [Shalev Asor](https://www.linkedin.com/in/shalev-asor)
 
