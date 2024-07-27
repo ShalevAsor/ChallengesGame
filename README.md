@@ -25,7 +25,7 @@
 2. **Login:** Sign in to start exploring and challenging yourself.
 3. **Play & Compete:** Participate in mini-games and challenges, track your stats, and aim for the top of the leaderboard!
 
-## 🌐 Connect with Us
+## 🌐 Connect with Me
 
 - **Website:** [My Website](https://shalevasor.github.io/)
 - **Contact:** [shalevasor@gmail.com](mailto:shalevasor@gmail.com)
