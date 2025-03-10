@@ -25,12 +25,6 @@
 2. **Login:** Sign in to start exploring and challenging yourself.
 3. **Play & Compete:** Participate in mini-games and challenges, track your stats, and aim for the top of the leaderboard!
 
-## 🌐 Connect with Me
-
-- **Website:** [My Website](https://shalevasor.github.io/)
-- **Contact:** [shalevasor@gmail.com](mailto:shalevasor@gmail.com)
-- **Connect with me on LinkedIn:** [Shalev Asor](https://www.linkedin.com/in/shalev-asor)
-
 ## 🤝 Contributing
 
 We welcome contributions to enhance Geo-Champ. If you have any suggestions or improvements, please open an issue or submit a pull request.
